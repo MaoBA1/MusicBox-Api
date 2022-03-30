@@ -6,10 +6,12 @@ const superUserSchema = new Schema({
     accountId: {type: mongoose.Schema.Types.ObjectId, ref:'User'},
     artistName: String,
     description: String,
-    mainGener: String,
+    profileImage:String,
+    profileSeconderyImage: String,
+    mainGener: {type: mongoose.Schema.Types.ObjectId, ref:'Gener'},
     additionalGener: [
         {
-            generName:String
+            gener: {type: mongoose.Schema.Types.ObjectId, ref:'Gener'},
         }
     ],
     skills: [
@@ -19,30 +21,12 @@ const superUserSchema = new Schema({
     ],
     albums: [
         {
-            albumName: String,
-            albumDescription: String,
-            albumCover: String,
-            releaseDate: Date,
-            releaseLabel: String,
-            tracks:[
-
-            ],
-
+          album: {type: mongoose.Schema.Types.ObjectId, ref:'Album'},
         }
     ],
     singles: [
         {
-            trackName: String,
-            trackLength: Number,
-            trackImage: String,
-            trackUri: String,
-            trackTags:[
-                {
-                   artistTag: String
-                }
-            ],
-            views:{type: Number, default:0},
-            likes:{type: Number, default:0}
+           track: {type: mongoose.Schema.Types.ObjectId, ref:'Song'},
         }
     ],
 });
