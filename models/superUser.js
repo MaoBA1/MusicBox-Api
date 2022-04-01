@@ -32,4 +32,4 @@ const superUserSchema = new Schema({
 });
 
 
-module.exports = mongoose.model('SuperUser', userSchema);
+module.exports = mongoose.model('SuperUser', superUserSchema);
