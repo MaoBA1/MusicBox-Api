@@ -30,46 +30,69 @@ router.post('/creatSuperUser', auth, async(request, response) =>{
             albums,
             singles
         } = request.body;
-        const _superUser = new SuperUser({
-            _id: mongoose.Types.ObjectId(),
-            accountId: accountId,
-            artistName: artistName,
-            description: description,
-            profileImage: profileImage,
-            profileSeconderyImage: profileSeconderyImage,
-            mainGener: getGenerId(mainGener),
-            additionalGener: getAdditionalGenerId(additionalGener),
-            skills: skills,
-            albums: albums,
-            singles: singles
-        });
-
-        return _superUser.save()
-        .then(newSuperUser => {
+        const isArtistNameInUse = await SuperUser.findOne({artistName: artistName});
+        if(isArtistNameInUse) {
             return response.status(200).json({
-                message: newSuperUser
+                message: `${artistName} is already used`
+            });
+        } else {
+            const generId = await getGenerId(mainGener);
+            const additionalGenerId = await getAdditionalGenerId(additionalGener)
+            const _superUser = new SuperUser({
+                _id: mongoose.Types.ObjectId(),
+                accountId: accountId,
+                artistName: artistName,
+                description: description,
+                profileImage: profileImage,
+                profileSeconderyImage: profileSeconderyImage,
+                mainGener: generId,
+                additionalGener: additionalGenerId,
+                skills: skills,
+                albums: albums,
+                singles: singles
+            });
+    
+            return _superUser.save()
+            .then(newSuperUser => {
+                return response.status(200).json({
+                    SuperUser: newSuperUser
+                })
             })
-        })
-        .catch(error => {
-            return response(500).json({
-                message: error
-            })
-        })        
+            .catch(error => {
+                return response.status(500).json({
+                    message: error
+                })
+            })  
+        }
+              
     }
 });
 
 
 
-const getGenerId = generName => {
-    const gener = Gener.findOne({generName: generName});
-    return gener._id;
+
+
+
+
+
+
+
+
+const getGenerId = async generName => {
+    const gener = await Gener.findOne({generName: generName});
+    const generId = gener? gener._id : null;
+    return generId;
 };
 
-const getAdditionalGenerId = additionalGener => {
-    const genrersId = [];
-    additionalGener.forEach(gener => {
-        genrersId.push(getGenerId(gener));
+const getAdditionalGenerId = async additionalGener => {
+
+    const genersId = [];
+    additionalGener.forEach(async gener => {
+         await getGenerId(gener)
+        .then(x => {console.log(x); genersId.push(x)})
     });
+    
+    return genersId
 }
 
 
