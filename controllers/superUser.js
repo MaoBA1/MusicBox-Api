@@ -88,8 +88,8 @@ const getAdditionalGenerId = async additionalGener => {
 
     const genersId = [];
     additionalGener.forEach(async gener => {
-         await getGenerId(gener)
-        .then(x => {console.log(x); genersId.push(x)})
+        await Gener.findOne({generName : gener})
+        .then(async x => await genersId.push(x));
     });
     
     return genersId
