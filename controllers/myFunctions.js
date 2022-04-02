@@ -1,3 +1,6 @@
+const Gener = require('../models/gener');
+const SuperUser = require('../models/superUser');
+
 const getGener = async generName => {
     const gener = await Gener.findOne({generName: generName});
     const formatted_gener = gener? {generName: gener.generName, _id: gener._id} : null;
@@ -33,8 +36,46 @@ const reorderFavoriteGeners = async(mongoList, listToAdd) => {
 }
 
 
+const getSub = async artistName => {
+    const artist = await SuperUser.findOne({artistName: artistName});
+    const formatted_artist = artist? {artistName: artist.artistName, _id: artist._id} : null;
+    return formatted_artist;
+};
+
+const getSubScribes = async subscribes => {
+
+    const subs = [];
+    let i = 0;
+    while(i <  subscribes.length) {
+        const newSub = await getSub(subscribes[i])
+        subs.push(newSub);
+        if(subs.length == i+1)
+        i++;
+    }
+    return subs;
+}
+
+
+const reorderSubscribes = async(mongoList, listToAdd) => {
+    listToAdd.forEach(x => {
+        let flag = false;
+        mongoList.forEach(y => {
+            if(x.artistName == y.artistName)
+                flag = true;
+        })
+
+        if(!flag){
+             mongoList.push(x);
+        }
+    })
+}
+
+
 module.exports = {
     getGener,
     getAdditionalGener,
-    reorderFavoriteGeners
+    reorderFavoriteGeners,
+    getSub,
+    getSubScribes,
+    reorderSubscribes
 }

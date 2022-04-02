@@ -224,9 +224,9 @@ router.put('/addGenerToFavorite', auth, async(request, response) => {
     const accountId = request.account._id;
     const account = await User.findById(accountId);
     const geners = request.body.favoritesGeners;
-    const formatted_geners = await getAdditionalGener(geners);
+    const formatted_geners = await funcs.getAdditionalGener(geners);
     console.log(formatted_geners);
-    reorderFavoriteGeners(account.favoritesGeners,formatted_geners);
+    funcs.reorderFavoriteGeners(account.favoritesGeners,formatted_geners);
     return account.save()
     .then(updated_accont => {
         return response.status(200).json({
@@ -240,10 +240,10 @@ router.put('/addGenerToFavorite', auth, async(request, response) => {
 router.put('/addSubscribe', auth, async(request, response) => {
     const accountId = request.account._id;
     const account = await User.findById(accountId);
-    const geners = request.body.subscribes;
-    const formatted_geners = await funcs.getAdditionalGener(geners) 
-    console.log(formatted_geners);
-    funcs.reorderFavoriteGeners(account.favoritesGeners,formatted_geners);
+    const subs = request.body.subscribes;
+    const formatted_subscribes = await funcs.getSubScribes(subs) 
+    console.log(formatted_subscribes);
+    funcs.reorderSubscribes(account.subscribes,formatted_subscribes);
     return account.save()
     .then(updated_accont => {
         return response.status(200).json({
