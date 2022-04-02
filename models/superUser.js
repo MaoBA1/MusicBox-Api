@@ -11,12 +11,12 @@ const superUserSchema = new Schema({
     profileSeconderyImage: String,
     mainGener: {      
         generName: String,
-        gener: {type: mongoose.Schema.Types.ObjectId, ref:'Gener'},  
+        _id: {type: mongoose.Schema.Types.ObjectId, ref:'Gener'},  
     }, 
-    additionalGener: [
+    additionalGener: [        
         {
            generName: String,
-           gener: {type: mongoose.Schema.Types.ObjectId, ref:'Gener'},
+           _id: {type: mongoose.Schema.Types.ObjectId, ref:'Gener'},
         }
     ],
     skills: [

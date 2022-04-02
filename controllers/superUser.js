@@ -36,8 +36,8 @@ router.post('/creatSuperUser', auth, async(request, response) =>{
                 message: `${artistName} is already used`
             });
         } else {
-            const generId = await getGenerId(mainGener);
-            const additionalGenerId = await getAdditionalGenerId(additionalGener)
+            const formatted_main_gener = await getGener(mainGener);
+            const formatted_additional_gener = await getAdditionalGener(additionalGener)
             const _superUser = new SuperUser({
                 _id: mongoose.Types.ObjectId(),
                 accountId: accountId,
@@ -45,8 +45,8 @@ router.post('/creatSuperUser', auth, async(request, response) =>{
                 description: description,
                 profileImage: profileImage,
                 profileSeconderyImage: profileSeconderyImage,
-                mainGener: generId,
-                additionalGener: additionalGenerId,
+                mainGener: formatted_main_gener,
+                additionalGener: formatted_additional_gener,
                 skills: skills,
                 albums: albums,
                 singles: singles
@@ -78,21 +78,23 @@ router.post('/creatSuperUser', auth, async(request, response) =>{
 
 
 
-const getGenerId = async generName => {
+const getGener = async generName => {
     const gener = await Gener.findOne({generName: generName});
-    const generId = gener? gener._id : null;
-    return generId;
+    const formatted_gener = gener? {generName: gener.generName, _id: gener._id} : null;
+    return formatted_gener;
 };
 
-const getAdditionalGenerId = async additionalGener => {
+const getAdditionalGener = async additionalGener => {
 
-    const genersId = [];
-    additionalGener.forEach(async gener => {
-        await Gener.findOne({generName : gener})
-        .then(async x => await genersId.push(x));
-    });
-    
-    return genersId
+    const geners = [];
+    let i = 0;
+    while(i <  additionalGener.length) {
+        const newGener = await getGener(additionalGener[i])
+        geners.push(newGener);
+        if(geners.length == i+1)
+        i++;
+    }
+    return geners;
 }
 
 
