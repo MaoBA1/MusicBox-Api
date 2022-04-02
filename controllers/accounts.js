@@ -4,8 +4,12 @@ const router = express.Router();
 const bycryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const SuperUser = require('../models/superUser');
+const Gener = require('../models/gener');
 const bcryptjs = require('bcryptjs');
 const auth = require('./auth');
+
+const funcs = require('./myFunctions')
 
 
 router.post('/creatAccount', async(request, response) => {
@@ -201,16 +205,53 @@ router.post('/updatePassword', async(request, response) => {
     })
 })
 
-router.get('/getUserData', auth, (request, response) => {
-    return response.status(200).json({
-        message: `Hello ${request.account.firstName} ${request.account.lastName}`
-    })
+router.get('/getUserData', auth, async(request, response) => {
+    const userId = request.account._id
+    if(request.account.isSuperUser){   
+        const superUser = await SuperUser.findOne({associateId : userId}).populate('accountId')
+        return response.status(200).json({
+        message: superUser
+        })
+    } else {
+        return response.status(200).json({
+            message: request.account
+        })
+    }
 })
 
 
+router.put('/addGenerToFavorite', auth, async(request, response) => {
+    const accountId = request.account._id;
+    const account = await User.findById(accountId);
+    const geners = request.body.favoritesGeners;
+    const formatted_geners = await getAdditionalGener(geners);
+    console.log(formatted_geners);
+    reorderFavoriteGeners(account.favoritesGeners,formatted_geners);
+    return account.save()
+    .then(updated_accont => {
+        return response.status(200).json({
+            Account: updated_accont
+        })
+    })
+
+})
 
 
+router.put('/addSubscribe', auth, async(request, response) => {
+    const accountId = request.account._id;
+    const account = await User.findById(accountId);
+    const geners = request.body.subscribes;
+    const formatted_geners = await funcs.getAdditionalGener(geners) 
+    console.log(formatted_geners);
+    funcs.reorderFavoriteGeners(account.favoritesGeners,formatted_geners);
+    return account.save()
+    .then(updated_accont => {
+        return response.status(200).json({
+            Account: updated_accont
+        })
+    })
 
+})
 
 
 
