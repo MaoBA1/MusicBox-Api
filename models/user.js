@@ -18,15 +18,11 @@ const userSchema = new Schema({
     Avatar: {type: String, default: 'https://e7.pngegg.com/pngimages/122/295/png-clipart-open-user-profile-facebook-free-content-facebook-silhouette-avatar-thumbnail.png'},
     favoritesGeners:[
         {
-            generName: String,
-            _Id: {type: mongoose.Schema.Types.ObjectId, ref: 'Gener'},
+            generId: {type: mongoose.Schema.Types.ObjectId, ref: 'Gener'},
         }
     ],
-    subscribes: [
-        {
-            artistName: String,
-            generId: {type: mongoose.Schema.Types.ObjectId, ref: 'SuperUser'},
-        }
+    subscribes: [        
+        {type: mongoose.Schema.Types.ObjectId, ref: 'SuperUser'},        
     ],
     playlists: [
         {

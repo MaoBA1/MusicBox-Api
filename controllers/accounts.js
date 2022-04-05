@@ -220,38 +220,71 @@ router.get('/getUserData', auth, async(request, response) => {
 })
 
 
-router.put('/addGenerToFavorite', auth, async(request, response) => {
+router.get('/addGenerToFavorite/:generId', auth, async(request, response) => {
     const accountId = request.account._id;
-    const account = await User.findById(accountId);
-    const geners = request.body.favoritesGeners;
-    const formatted_geners = await funcs.getAdditionalGener(geners);
-    console.log(formatted_geners);
-    funcs.reorderFavoriteGeners(account.favoritesGeners,formatted_geners);
-    return account.save()
-    .then(updated_accont => {
-        return response.status(200).json({
-            Account: updated_accont
+    const generId = request.params.generId;   
+    console.log(request.account); 
+    await User.findById(accountId)
+    .then(async user => {
+        if(user) {
+             user.favoritesGeners.push({generId: generId})
+             console.log(user);
+             return user.save()
+             .then(user_updated => {
+                 return response.status(200).json({
+                     User: user_updated
+                 })
+             })
+             .catch(error => {
+                 return response.status(500).json({
+                     Error: error
+                 })
+             })
+        } else {
+            return response.status(403).json({
+                message: 'User not found'
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            Error: error
         })
     })
-
 })
 
+// router.put('/addGenerToFavorite', auth, async(request, response) => {
+//     const accountId = request.account._id;
+//     const account = await User.findById(accountId);
+//     const geners = request.body.favoritesGeners;
+//     const formatted_geners = await funcs.getAdditionalGener(geners);
+//     console.log(formatted_geners);
+//     funcs.reorderFavoriteGeners(account.favoritesGeners,formatted_geners);
+//     return account.save()
+//     .then(updated_accont => {
+//         return response.status(200).json({
+//             Account: updated_accont
+//         })
+//     })
 
-router.put('/addSubscribe', auth, async(request, response) => {
-    const accountId = request.account._id;
-    const account = await User.findById(accountId);
-    const subs = request.body.subscribes;
-    const formatted_subscribes = await funcs.getSubScribes(subs) 
-    console.log(formatted_subscribes);
-    funcs.reorderSubscribes(account.subscribes,formatted_subscribes);
-    return account.save()
-    .then(updated_accont => {
-        return response.status(200).json({
-            Account: updated_accont
-        })
-    })
+// })
 
-})
+
+// router.put('/addSubscribe', auth, async(request, response) => {
+//     const accountId = request.account._id;
+//     const account = await User.findById(accountId);
+//     const subs = request.body.subscribes;
+//     const formatted_subscribes = await funcs.getSubScribes(subs) 
+//     console.log(formatted_subscribes);
+//     funcs.reorderSubscribes(account.subscribes,formatted_subscribes);
+//     return account.save()
+//     .then(updated_accont => {
+//         return response.status(200).json({
+//             Account: updated_accont
+//         })
+//     })
+
+// })
 
 
 
