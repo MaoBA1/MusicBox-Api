@@ -17,9 +17,8 @@ const userSchema = new Schema({
     isSuperUser:{type: Boolean, default: false}, 
     Avatar: {type: String, default: 'https://e7.pngegg.com/pngimages/122/295/png-clipart-open-user-profile-facebook-free-content-facebook-silhouette-avatar-thumbnail.png'},
     favoritesGeners:[
-        {
-            generId: {type: mongoose.Schema.Types.ObjectId, ref: 'Gener'},
-        }
+         {type: mongoose.Schema.Types.ObjectId, ref: 'Gener'},
+        
     ],
     subscribes: [        
         {type: mongoose.Schema.Types.ObjectId, ref: 'SuperUser'},        
