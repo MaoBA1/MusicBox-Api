@@ -3,7 +3,7 @@ const SuperUser = require('../models/superUser');
 
 const getGener = async generName => {
     const gener = await Gener.findOne({generName: generName});
-    const formatted_gener = gener? {generName: gener.generName, _id: gener._id} : null;
+    const formatted_gener = gener? gener._id : null;
     return formatted_gener;
 };
 

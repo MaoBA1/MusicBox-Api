@@ -7,7 +7,7 @@ const songSchema = new Schema({
     trackLength: Number,
     trackImage: String,
     trackUri: String,
-    //ADD GENER
+    gener: {type:mongoose.Schema.Types.ObjectId, ref:'Gener'},
     trackTags:[
         {
            artistTag: String

@@ -226,19 +226,33 @@ router.put('/addGenerToFavorite/:generId', auth, async(request, response) => {
     await User.findById(accountId)
     .then(async user => {
         if(user) {
-             user.favoritesGeners.push(generId)
-             console.log(user);
-             return user.save()
-             .then(user_updated => {
-                 return response.status(200).json({
-                     User: user_updated
-                 })
-             })
-             .catch(error => {
-                 return response.status(500).json({
-                     Error: error
-                 })
-             })
+            Gener.findById(generId)
+            .then(gener => {
+                if(gener) {
+                    user.favoritesGeners.push(gener._id)
+                    return user.save()
+                    .then(user_updated => {
+                        return response.status(200).json({
+                            User: user_updated
+                        })
+                    })
+                    .catch(error => {
+                        return response.status(500).json({
+                            Error: error
+                        })
+                    })
+                } else {
+                    return response.status(403).json({
+                        message: 'Gener not found'
+                    })
+                }
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    Error: error
+                })
+            })
+            
         } else {
             return response.status(403).json({
                 message: 'User not found'

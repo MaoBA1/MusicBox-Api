@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 const albumSchema = new Schema({
     _id: mongoose.Schema.Types.ObjectId,
+    associatedArtist: {type: mongoose.Schema.Types.ObjectId, ref:'SuperUser'},
     albumName: String,
     albumDescription: String,
     albumCover: String,
@@ -16,7 +17,7 @@ const albumSchema = new Schema({
             trackLength: Number,
             trackImage: String,
             trackUri: String,
-            //ADD GENER
+            gener: {type:mongoose.Schema.Types.ObjectId, ref:'Gener'},
             trackTags:[
                 {
                    artistTag: String
