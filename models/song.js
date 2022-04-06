@@ -7,6 +7,7 @@ const songSchema = new Schema({
     trackLength: Number,
     trackImage: String,
     trackUri: String,
+    //ADD GENER
     trackTags:[
         {
            artistTag: String

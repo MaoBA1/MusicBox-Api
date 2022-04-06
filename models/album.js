@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+
 const albumSchema = new Schema({
     _id: mongoose.Schema.Types.ObjectId,
     albumName: String,
@@ -10,7 +11,19 @@ const albumSchema = new Schema({
     releaseLabel: String,
     tracks:[
         {
-            track:{type: mongoose.Schema.Types.ObjectId, ref: 'Song'}
+            _id: mongoose.Schema.Types.ObjectId,
+            trackName: String,
+            trackLength: Number,
+            trackImage: String,
+            trackUri: String,
+            //ADD GENER
+            trackTags:[
+                {
+                   artistTag: String
+                }
+            ],
+            views:{type: Number, default:0},
+            likes:{type: Number, default:0}
         }
     ],
 });

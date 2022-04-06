@@ -283,16 +283,14 @@ router.put('/addSubscribe/:artistId', auth , async(request, response) => {
     })
 })
 
-router.delete('/removeGenerFromFavorites/:generId', auth, async(request, response) => {
+router.put('/removeGenerFromFavorites/:generId', auth, async(request, response) => {
+    const generId = request.params.generId;
     const accountId = request.account._id;
-    await User.findById(accountId)
+    User.findById(accountId)
     .then(async user => {
-        if(user) {
-            console.log(user);
-            const generId = request.params.generId;
-             
-            await user.favoritesGeners.findByIdAndDelete(generId)
-            
+        if(user) { 
+            let favoritesGeners = user.favoritesGeners.filter(x => x != generId);                   
+            user.favoritesGeners = favoritesGeners
             return user.save()
             .then(user_updated => {
                 return response.status(200).json({
@@ -304,12 +302,45 @@ router.delete('/removeGenerFromFavorites/:generId', auth, async(request, respons
                     Error: error
                 })
             })
-
         } else {
             return response.status(403).json({
-                message: 'User not found'
+                message: 'User Not found'
             })
         }
+        
+    })
+    .catch(error => {
+        return response.status(500).json({
+            Error: error
+        })
+    })
+})
+
+router.put('/removeSubscribe/:artistId', auth, async(request, response) => {
+    const artistId = request.params.artistId;
+    const accountId = request.account._id;
+    User.findById(accountId)
+    .then(async user => {
+        if(user) { 
+            let subscribes = user.subscribes.filter(x => x != artistId);                   
+            user.subscribes = subscribes
+            return user.save()
+            .then(user_updated => {
+                return response.status(200).json({
+                    User: user_updated
+                })
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    Error: error
+                })
+            })
+        } else {
+            return response.status(403).json({
+                message: 'User Not found'
+            })
+        }
+        
     })
     .catch(error => {
         return response.status(500).json({
