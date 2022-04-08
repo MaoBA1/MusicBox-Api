@@ -14,6 +14,8 @@ const albumSchema = new Schema({
         {
             _id: mongoose.Schema.Types.ObjectId,
             trackName: String,
+            artistName: String,
+            artistId: {type:mongoose.Schema.Types.ObjectId, ref:'SuperUser'},
             trackLength: Number,
             trackImage: String,
             trackUri: String,

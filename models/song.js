@@ -4,13 +4,15 @@ const Schema = mongoose.Schema;
 const songSchema = new Schema({
     _id: mongoose.Schema.Types.ObjectId,
     trackName: String,
+    artistName: String,
+    artistId: {type:mongoose.Schema.Types.ObjectId, ref:'SuperUser'},
     trackLength: Number,
     trackImage: String,
     trackUri: String,
     gener: {type:mongoose.Schema.Types.ObjectId, ref:'Gener'},
     trackTags:[
         {
-           artistTag: String
+           type: String,
         }
     ],
     views:{type: Number, default:0},
