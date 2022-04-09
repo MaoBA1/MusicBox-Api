@@ -161,7 +161,6 @@ router.get('/getAllArtistSong', auth, async(request, response) => {
             Error: error
         })
     })
-    
 })
 
 
