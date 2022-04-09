@@ -114,27 +114,55 @@ router.put('/updateSong/:songId', auth, async(request, response) => {
 
 })
 
- router.delete('removeSong/:songId', auth, async(request, response) => {
+ router.delete('/removeSong/:songId', auth, async(request, response) => {
      const songId = request.params.songId;
      const accountId = request.account._id;
      const artist = await SuperUser.findOne({accountId: accountId});
-     const singles = artist.singles.filter(trackId => trackId != songId);
+     const singles = artist.singles.filter(trackId => trackId._id != songId);
      artist.singles = singles;
-     artist.save();
-     
+     artist.save();     
      Song.findByIdAndDelete(songId)
      .then(song_deleted => {
          return response.status(200).json({
              message: `${song_deleted.trackName} is deleted`
          })
      })
-     .catch(error => {
-         return response.status(500).json({
-             Error: error
+     .catch(() => {
+         return response.status(403).json({
+             message: 'Song not exists'
          })
-     })
-     
- })
+     })     
+})
+
+router.get('/getAllArtistSong', auth, async(request, response) => {
+    const accountId = request.account._id;
+    SuperUser.findOne({accountId: accountId})    
+    .then(artist => {
+        if(artist) {
+            Song.find({artistId: artist._id})
+            .then(artistSongList => {
+                return response.status(200).json({
+                    ArtistSongs: artistSongList
+                })
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    Error: error
+                })
+            })
+        } else {
+            return response.status(403).json({
+                message: 'Artist not found'
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            Error: error
+        })
+    })
+    
+})
 
 
 
