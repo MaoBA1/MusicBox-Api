@@ -25,6 +25,7 @@ const userSchema = new Schema({
     ],
     playlists: [
         {
+            _id: mongoose.Schema.Types.ObjectId,
             playlistName: String,
             songs:[
                 { 

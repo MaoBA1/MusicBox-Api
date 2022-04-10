@@ -1,5 +1,7 @@
 const Gener = require('../models/gener');
 const SuperUser = require('../models/superUser');
+const User = require('../models/user');
+const Song = require('../models/song');
 
 const getGener = async generName => {
     const gener = await Gener.findOne({generName: generName});
@@ -77,5 +79,5 @@ module.exports = {
     reorderFavoriteGeners,
     getSub,
     getSubScribes,
-    reorderSubscribes
+    reorderSubscribes,   
 }

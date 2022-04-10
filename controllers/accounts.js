@@ -9,7 +9,10 @@ const Gener = require('../models/gener');
 const bcryptjs = require('bcryptjs');
 const auth = require('./auth');
 
-const funcs = require('./myFunctions')
+const funcs = require('./myFunctions');
+const Song = require('../models/song');
+const { response } = require('express');
+
 
 
 router.post('/creatAccount', async(request, response) => {
@@ -364,6 +367,114 @@ router.put('/removeSubscribe/:artistId', auth, async(request, response) => {
 })
 
 
+router.put('/createNewPlaylist', auth, async(request, response) => {
+    const accountId = request.account._id;
+    User.findById(accountId)
+    .then(async user => {
+        if(user) {
+            const playlistName = request.body.playlistName;
+            user.playlists.push({_id: mongoose.Types.ObjectId(), playlistName: playlistName, songs: []})
+            return user.save()
+            .then(user_updated => {
+                return response.status(200).json({
+                    User: user_updated
+                })
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    Error: error
+                })
+            })
+        } else {
+            return response.status(403).json({
+                message: 'User not found'
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            Error: error
+        })
+    })
+})
+
+router.put('/addSongToPlaylist/:playlistId/:songId', auth, async(request, response) => {
+    const accountId = request.account._id;
+    User.findById(accountId)
+    .then(async user => {
+        if(user) {
+            const {playlistId, songId} = request.params;
+            Song.findById(songId)
+            .then(async song => {
+                if(song){
+                    const trackName = song.trackName;
+                    user.playlists.map(playlist => {
+                        if(playlist._id == playlistId){
+                            playlist.songs.push({trackName: trackName, _id:songId})
+                            return user.save()
+                            .then(user_updated => {
+                                return response.status(200).json({
+                                    User: user_updated
+                                })
+                            })
+                        } 
+                    })
+                } else {
+                    return response.status(403).json({
+                        message: 'Song not found'
+                    })
+                }
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    Error: error
+                })
+            })
+        } else {
+            return response.status(403).json({
+                message: 'User Not Found'
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            Error: error
+        })
+    })
+})
+
+router.put('/removeSongFromPlaylist/:playlistId/:songId', auth, async(request, response) => {
+    const accountId = request.account._id;
+    User.findById(accountId)
+    .then(async user => {
+        if(user) {
+            const songId = request.params.songId;            
+            const playlistId = request.params.playlistId;
+            const playlist = user.playlists.filter(x => x._id == playlistId)[0];
+            const songList = playlist.songs.filter(song => song._id != songId);
+            user.playlists.map(playlist => {
+                if(playlist._id == playlistId){
+                    playlist.songs = songList;
+                    return user.save()
+                    .then(user_updated => {
+                        return response.status(200).json({
+                            User: user_updated
+                        })
+                    })
+                }
+            })
+        } else {
+            return response.status(403).json({
+                message: 'User not found'
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            Error: error
+        })
+    })
+})
 
 
 

@@ -134,9 +134,9 @@ router.put('/updateSong/:songId', auth, async(request, response) => {
      })     
 })
 
-router.get('/getAllArtistSong', auth, async(request, response) => {
-    const accountId = request.account._id;
-    SuperUser.findOne({accountId: accountId})    
+router.get('/getAllArtistSong/:artistId', auth, async(request, response) => {
+    const artistId = request.params.artistId;
+    SuperUser.findOne({_id: artistId})    
     .then(artist => {
         if(artist) {
             Song.find({artistId: artist._id})
