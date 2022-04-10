@@ -8,11 +8,9 @@ const SuperUser = require('../models/superUser');
 const Gener = require('../models/gener');
 const bcryptjs = require('bcryptjs');
 const auth = require('./auth');
-
 const funcs = require('./myFunctions');
 const Song = require('../models/song');
-const { response } = require('express');
-const { request } = require('express');
+
 
 
 

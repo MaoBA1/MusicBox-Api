@@ -241,6 +241,112 @@ router.put('/removeSongFromPlaylist/:playlistId/:songId', auth, async(request, r
     })
 })
 
+router.put('/likeSong/:songId', auth, async(request, response) => {
+    const accountId = request.account._id;
+    User.findById(accountId)
+    .then(async user => {
+        if(user) {
+            const songId = request.params.songId;
+            Song.findById(songId)
+            .then(async song => {
+                if(song){
+                    const favoritesSongList = user.playlists.filter(x => x.playlistName == "Song That You Liked")[0];
+                    if(favoritesSongList) {
+                        user.playlists.map(playlist => {
+                            if(playlist == (favoritesSongList)) {
+                                const isSongLiked = playlist.songs.filter(x => x._id.equals(song._id))[0];
+                                if(!isSongLiked){
+                                    playlist.songs.push({trackName: song.trackName, _id: song._id});
+                                    song.likes = song.likes+1;
+                                }                                
+                            }
+                        })
+                    } else {
+                        console.log(user.playlists);
+                        user.playlists.push({
+                            _id: mongoose.Types.ObjectId(),
+                            playlistName: "Song That You Liked", 
+                            songs: [{trackName: song.trackName, _id: song._id}]
+                        })
+                        song.likes = song.likes+1;
+                    }                    
+                    song.save();
+                    return user.save()
+                    .then(user_updated => {
+                        return response.status(200).json({
+                            User: user_updated
+                        })
+                    })
+                    
+                    
+                } else {
+                    return response.status(403).json({
+                        message: 'Song not found'
+                    })
+                }
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    Error: error
+                })
+            })
+        } else {
+            return response.status(403).json({
+                message: 'User not found'
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            Error: error
+        })
+    })
+})
+
+router.put('/unlikeSong/:songId', auth, async(request, response) => {
+    const accountId = request.account._id;
+    User.findById(accountId)
+    .then(async user => {
+        if(user) {
+            const songId = request.params.songId;
+            Song.findById(songId)
+            .then(async song => {
+                if(song) {
+                    user.playlists.map(playlist => {
+                        if(playlist.playlistName == "Song That You Liked") {
+                            const updated_playlist = playlist.songs.filter(x => !x._id.equals(song._id)); 
+                            playlist.songs = updated_playlist;         
+                            song.likes = song.likes-1;
+                            song.save();
+                            return user.save()
+                            .then(user_updated => {
+                                return response.status(200).json({
+                                    User: user_updated
+                                })
+                            })
+                        }
+                    })
+                    
+
+                } else {
+                    return response.status(403).json({
+                        message: 'Song not found'
+                    })
+                }
+            })
+        } else {
+            return response.status(403).json({
+                message: 'User not found'
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            Error: error
+        })
+    })
+})
+
 
 
 
