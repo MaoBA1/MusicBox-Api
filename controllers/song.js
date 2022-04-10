@@ -5,6 +5,7 @@ const User = require('../models/user');
 const SuperUser = require('../models/superUser');
 const Gener = require('../models/gener');
 const Song = require('../models/song');
+const Album = require('../models/album');
 const auth = require('./auth');
 
 router.post('/creatNewSong/:generId', auth, async (request, response) => {
@@ -337,6 +338,69 @@ router.put('/unlikeSong/:songId', auth, async(request, response) => {
         } else {
             return response.status(403).json({
                 message: 'User not found'
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            Error: error
+        })
+    })
+})
+
+router.put('/addSongToAlbum/:albumId/:songId', auth, async(request, response) => {
+    const accountId = request.account._id;
+    const albumId = request.params.albumId;
+    Album.findById(albumId)
+    .then(async album => {
+        if(album) {
+            const songId = request.params.songId;
+            const isTrackInAlbum = album.tracks.filter(x => x._id == songId)[0];
+            if(isTrackInAlbum) {
+                return response.status(200).json({
+                    message: 'Song already in the album'
+                })
+            } else {
+                Song.findById(songId)
+                .then(async song => {
+                    if(song) {
+                        const artist = await SuperUser.findOne({accountId: accountId});
+                        album.tracks.push({
+                            _id: songId,
+                            trackName: song.trackName,
+                            artistName: artist.artistName,
+                            artistId: artist._id,
+                            trackLength: song.trackLength,
+                            trackImage: song.trackImage,
+                            trackUri: song.trackUri,
+                            gener: song.gener,
+                            trackTags: song.trackTags,
+                            views: song.views,
+                            likes: song.likes                            
+                        })
+                        return album.save()
+                        .then(album_updated => {
+                            return response.status(200).json({
+                                Album: album_updated
+                            })
+                        })
+                    } else {
+                        return response.status(403).json({
+                            message: 'Song not found'
+                        })
+                    }
+                })
+                .catch(error => {
+                    return response.status(500).json({
+                        Error: error
+                    })
+                })
+            }
+
+            
+        } else {
+            return response.status(403).json({
+                message: 'Album not found'
             })
         }
     })

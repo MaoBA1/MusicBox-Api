@@ -7,6 +7,7 @@ const User = require('../models/user');
 const SuperUser = require('../models/superUser');
 const Gener = require('../models/gener');
 const Song = require('../models/song');
+const Album = require('../models/album');
 const auth = require('./auth');
 
 const funcs = require('./myFunctions')
@@ -231,6 +232,52 @@ router.put('/removeAdditionalGener/:generId', auth, async(request, response) => 
             Error: error
         })
     })
+})
+
+router.post('/createAlbum', auth, async(request, response) => {
+    const accountId = request.account._id;
+    SuperUser.findOne({accountId: accountId})
+    .then(async artist => {
+        if(artist) {
+            const{
+                albumName,
+                albumDescription,
+                albumCover,
+                releaseDate,
+                releaseLabel
+            } = request.body;
+            const _album = new Album({
+                _id: mongoose.Types.ObjectId(),
+                associatedArtist: artist._id,
+                albumName: albumName,
+                albumDescription: albumDescription,
+                albumCover: albumCover,
+                releaseDate: releaseDate,
+                releaseLabel: releaseLabel                
+            });
+            return _album.save()
+            .then(newAlbum => {
+                return response.status(200).json({
+                    Album: newAlbum
+                })
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    Error: error
+                })
+            })
+        } else {
+            return response.status(403).json({
+                message: 'Your account not recognize as artist'
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            Error: error
+        })
+    })
+
 })
 
 

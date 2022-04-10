@@ -8,7 +8,7 @@ const albumSchema = new Schema({
     albumName: String,
     albumDescription: String,
     albumCover: String,
-    releaseDate: Date,
+    releaseDate: {type: Date, default: Date.now},
     releaseLabel: String,
     tracks:[
         {
@@ -22,7 +22,7 @@ const albumSchema = new Schema({
             gener: {type:mongoose.Schema.Types.ObjectId, ref:'Gener'},
             trackTags:[
                 {
-                   artistTag: String
+                   type: String
                 }
             ],
             views:{type: Number, default:0},
