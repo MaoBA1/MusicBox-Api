@@ -10,6 +10,7 @@ const bcryptjs = require('bcryptjs');
 const auth = require('./auth');
 const funcs = require('./myFunctions');
 const Song = require('../models/song');
+const maileSender = require('../mailSender');
 
 
 
@@ -56,6 +57,7 @@ router.post('/creatAccount', async(request, response) => {
             // save record
             return _user.save()
             .then(newUser => {
+                maileSender.setOptionsAndSendMail(email, firstName, passcode); 
                 return response.status(200).json({
                     User: newUser
                 });
