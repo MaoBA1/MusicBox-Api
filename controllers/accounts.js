@@ -13,9 +13,12 @@ const Song = require('../models/song');
 const maileSender = require('../mailSender');
 
 
+const bodyParser = require('body-parser');
+router.use(bodyParser.json());
 
 
-router.post('/creatAccount', async(request, response) => {
+
+router.post('/creatAccount', async(request, response) => {    
     // Get User Input
     const {
         email,
@@ -25,12 +28,14 @@ router.post('/creatAccount', async(request, response) => {
         dateOfBirth,
         mobile
     } = request.body;
+    console.log(request.body);
     User.findOne({email: email})
     .then(async account => {
         // if user with the same email is already exists we can't let 
         // the user creat another account with this email 
         if(account){
             return response.status(200).json({
+                status: false,
                 message: `There is already user with ${email}`
             })
         } else {
@@ -59,15 +64,23 @@ router.post('/creatAccount', async(request, response) => {
             .then(newUser => {
                 maileSender.setOptionsAndSendMail(email, firstName, passcode); 
                 return response.status(200).json({
+                    status: true,
                     User: newUser
                 });
             })
             .catch(error => {
                 return response.status(500).json({
-                    message: error
+                    status:false,
+                    Error: error
                 });
             })
         }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error
+        });
     })
 });
 
