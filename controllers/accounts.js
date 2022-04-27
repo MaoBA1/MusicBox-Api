@@ -155,6 +155,7 @@ router.post('/login', async(request, response) => {
             }
         } else {
             return response.status(200).json({
+                status: false,
                 message:`There is no account like ${email}`
             })
         }
