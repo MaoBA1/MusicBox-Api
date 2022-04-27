@@ -140,16 +140,19 @@ router.post('/login', async(request, response) => {
                     const token = await jwt.sign(acc_data,"A6cXZ9Mj5hM4As2wiIugIz5DHNO3q1VF");
                     
                     return response.status(200).json({
+                        status:true,
                         message: token
                     })
                 } else {
                     return response.status(200).json({
+                        status:false,
                         message: 'Password incorrect'
                     });
                 }
             } else {
                 // if user is locked for sone reason we can't let him go on
                 return response.status(200).json({
+                    status: false,
                     message: `${email} is not approved`
                 })
             }

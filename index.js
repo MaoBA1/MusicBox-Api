@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const app = express();
 const bodyParser = require('body-parser');
 const port = 3000;
+const ip = '192.168.1.40';
 const cors = require('cors');
 const accountRouter = require('./controllers/accounts');
 const superAccount = require('./controllers/superUser');
@@ -26,7 +27,7 @@ const url = 'mongodb+srv://kiosk_user:maor1997@cluster0.4l8lk.mongodb.net/MusicB
 mongoose.connect(url)
 .then(results => {
     console.log(results);
-    app.listen(port, () => {
+    app.listen(port, ip, () => {
         console.log(`Server is listening on port ${port}`);
     });
 })
