@@ -87,6 +87,7 @@ router.post('/verify', async(request, response) => {
             passcode,
             inputted_passcode
             } = request.body;
+    console.log(request.body);
     User.findOne({email : email})
     .then(async account => {
         if(account) {
@@ -109,7 +110,9 @@ router.post('/verify', async(request, response) => {
         }
         // if there is no user with the inputed email we cant verify him and we return message about that
          else {
-            if(inputted_passcode == passcode){
+             
+            if(inputted_passcode == passcode.toString()){
+                console.log('test');
                 const _user = new User({
                     _id: mongoose.Types.ObjectId(),
                     email: lowercaseEmail,
@@ -121,11 +124,18 @@ router.post('/verify', async(request, response) => {
                     passcode: passcode,
                     isApproved: true
                 })
+                console.log(_user);
                 return _user.save()
                 .then(new_user => {
                     return response.status(200).json({
                         status:true,
                         newUser: new_user
+                    })
+                })
+                .catch(error => {
+                    return response.status(500).json({
+                        status:false,
+                        Error: error
                     })
                 })
             } else {
