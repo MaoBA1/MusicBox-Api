@@ -25,18 +25,19 @@ router.post('/creatAccount', async(request, response) => {
         firstName,
         lastName,
         password,
-        dateOfBirth,
+        dob,
         mobile
     } = request.body;
-    console.log(request.body);
-    User.findOne({email: email})
+    let lowercaseEmail = email.toLowerCase();  
+    console.log(request.body);  
+    User.findOne({email: lowercaseEmail})
     .then(async account => {
         // if user with the same email is already exists we can't let 
         // the user creat another account with this email 
         if(account){
             return response.status(200).json({
                 status: false,
-                message: `There is already user with ${email}`
+                message: `There is already user with ${lowercaseEmail}`
             })
         } else {
             // We start make new record for this new user 
@@ -48,32 +49,22 @@ router.post('/creatAccount', async(request, response) => {
             // Generate Passcode
             // we generate verification passcode for the user
             const passcode = generateRandomIntegerInRange(1000,9999);
-            // Creat user in Mongodb
-            const _user = new User({
-                _id: mongoose.Types.ObjectId(),
-                email: email,
+            // Creat user in Mongodb            
+            const _user = {
+                email: lowercaseEmail,
                 firstName: firstName,
                 lastName: lastName,
                 password: formatted_password,
                 mobile: mobile,
-                dob: new Date(dateOfBirth),
+                dob: new Date(dob),
                 passcode: passcode
+            }            
+            maileSender.setOptionsAndSendMail(email, firstName, passcode);
+            return response.status(200).json({
+                status: true,
+                newUser: _user
             })
-            // save record
-            return _user.save()
-            .then(newUser => {
-                maileSender.setOptionsAndSendMail(email, firstName, passcode); 
-                return response.status(200).json({
-                    status: true,
-                    User: newUser
-                });
-            })
-            .catch(error => {
-                return response.status(500).json({
-                    status:false,
-                    Error: error
-                });
-            })
+            
         }
     })
     .catch(error => {
@@ -86,7 +77,16 @@ router.post('/creatAccount', async(request, response) => {
 
 router.post('/verify', async(request, response) => {
     // Get User Input
-    const {email, passcode} = request.body;
+    const {
+            email,
+            firstName,
+            lastName,
+            formatted_password,
+            mobile,
+            dob,
+            passcode,
+            inputted_passcode
+            } = request.body;
     User.findOne({email : email})
     .then(async account => {
         if(account) {
@@ -109,10 +109,38 @@ router.post('/verify', async(request, response) => {
         }
         // if there is no user with the inputed email we cant verify him and we return message about that
          else {
-            return response.status(200).json({
-                message: `There is no account like ${email}`
-            });
+            if(inputted_passcode == passcode){
+                const _user = new User({
+                    _id: mongoose.Types.ObjectId(),
+                    email: lowercaseEmail,
+                    firstName: firstName,
+                    lastName: lastName,
+                    password: formatted_password,
+                    mobile: mobile,
+                    dob: new Date(dob),
+                    passcode: passcode,
+                    isApproved: true
+                })
+                return _user.save()
+                .then(new_user => {
+                    return response.status(200).json({
+                        status:true,
+                        newUser: new_user
+                    })
+                })
+            } else {
+                return response.status(200).json({
+                    status: false,
+                    message: 'Passcode not match!'
+                })
+            }
         }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error
+        })
     })
 })
 
