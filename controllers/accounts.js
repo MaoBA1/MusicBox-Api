@@ -62,7 +62,7 @@ router.post('/creatAccount', async(request, response) => {
             maileSender.setOptionsAndSendMail(email, firstName, passcode);
             return response.status(200).json({
                 status: true,
-                newUser: _user
+                account: _user
             })
             
         }
@@ -220,17 +220,20 @@ router.post('/forgetPassword', async(request, response) => {
             return account.save()
             .then(account_updated => {
                 return response.status(200).json({
-                    message: account_updated
+                    status: true,
+                    account: account_updated
                 })
             })
         } else {
             return response.status(200).json({
+                status: false,
                 message:`There is no account like ${email}`
             })
         }
     })
     .catch(error => {
         return response.status(500).json({
+            status: false,
             message: error
         })
     })
