@@ -115,7 +115,7 @@ router.post('/verify', async(request, response) => {
                 console.log('test');
                 const _user = new User({
                     _id: mongoose.Types.ObjectId(),
-                    email: lowercaseEmail,
+                    email: email,
                     firstName: firstName,
                     lastName: lastName,
                     password: formatted_password,
