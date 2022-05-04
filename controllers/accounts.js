@@ -91,12 +91,14 @@ router.post('/verify', async(request, response) => {
     User.findOne({email : email})
     .then(async account => {
         if(account) {
-            if(account.passcode == passcode) {
+            if(account.passcode == inputted_passcode) {
+                console.log('test');
                 // if passcode match we update isApproved property to true
                 account.isApproved = true;
                 return account.save()
                 .then(account_updated => {
                     return response.status(200).json({
+                        statusForgetPassword: true,
                         user: account_updated
                     })
                 })
@@ -112,7 +114,6 @@ router.post('/verify', async(request, response) => {
          else {
              
             if(inputted_passcode == passcode.toString()){
-                console.log('test');
                 const _user = new User({
                     _id: mongoose.Types.ObjectId(),
                     email: email,
@@ -129,7 +130,7 @@ router.post('/verify', async(request, response) => {
                 .then(new_user => {
                     return response.status(200).json({
                         status:true,
-                        newUser: new_user
+                        account: new_user
                     })
                 })
                 .catch(error => {
@@ -208,6 +209,7 @@ router.post('/login', async(request, response) => {
    })
 })
 
+//?
 router.post('/forgetPassword', async(request, response) => {
     // Get User Input
     const email = request.body.email
@@ -216,6 +218,7 @@ router.post('/forgetPassword', async(request, response) => {
         if(account){
             // We generate new passcode for the user and update in the user record
             const newPasscode = generateRandomIntegerInRange(1000, 9999);
+            maileSender.setOptionsAndSendMail(email, account.firstName, newPasscode);
             account.passcode = newPasscode;
             return account.save()
             .then(account_updated => {
@@ -251,6 +254,7 @@ router.post('/updatePassword', async(request, response) => {
             account.save()
             .then(account_updated => {
                 return response.status(200).json({
+                    status: true,
                     message: account_updated
                 })
             })
@@ -262,6 +266,7 @@ router.post('/updatePassword', async(request, response) => {
     })
     .catch(error => {
         return response.status(500).json({
+            status: false,
             message: error
         })
     })
