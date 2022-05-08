@@ -14,7 +14,8 @@ const userSchema = new Schema({
     passcode: Number,
     isApproved: {type: Boolean, default: false},
     isLocked: {type: Boolean, default: false},
-    isSuperUser:{type: Boolean, default: false}, 
+    isSuperUser:{type: Boolean, default: false},
+    isItFirstUse:{type: Boolean, default: true}, 
     Avatar: {type: String, default: 'https://e7.pngegg.com/pngimages/122/295/png-clipart-open-user-profile-facebook-free-content-facebook-silhouette-avatar-thumbnail.png'},
     favoritesGeners:[
          {type: mongoose.Schema.Types.ObjectId, ref: 'Gener'},
