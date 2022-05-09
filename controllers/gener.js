@@ -8,7 +8,7 @@ const Song = require('../models/song');
 const auth = require('./auth');
 
 
-router.get('/getAllAppGeners', auth, async(request, response) => {
+router.get('/getAllAppGeners', async(request, response) => {
     let geners = await Gener.find({});
     return response.status(200).json({
         AllGeners: geners
