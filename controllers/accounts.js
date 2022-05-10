@@ -300,34 +300,40 @@ router.put('/addGenerToFavorite/:generId', auth, async(request, response) => {
                     return user.save()
                     .then(user_updated => {
                         return response.status(200).json({
+                            status:true,
                             User: user_updated
                         })
                     })
                     .catch(error => {
                         return response.status(500).json({
+                            status:false,
                             Error: error
                         })
                     })
                 } else {
                     return response.status(403).json({
+                        status:false,
                         message: 'Gener not found'
                     })
                 }
             })
             .catch(error => {
                 return response.status(500).json({
+                    status:false,
                     Error: error
                 })
             })
             
         } else {
             return response.status(403).json({
+                status:false,
                 message: 'User not found'
             })
         }
     })
     .catch(error => {
         return response.status(500).json({
+            status:false,
             Error: error
         })
     })
@@ -375,16 +381,19 @@ router.put('/removeGenerFromFavorites/:generId', auth, async(request, response) 
             return user.save()
             .then(user_updated => {
                 return response.status(200).json({
+                    status: true,
                     User: user_updated
                 })
             })
             .catch(error => {
                 return response.status(500).json({
+                    status: false,
                     Error: error
                 })
             })
         } else {
             return response.status(403).json({
+                status: false,
                 message: 'User Not found'
             })
         }
@@ -392,6 +401,7 @@ router.put('/removeGenerFromFavorites/:generId', auth, async(request, response) 
     })
     .catch(error => {
         return response.status(500).json({
+            status: false,
             Error: error
         })
     })
