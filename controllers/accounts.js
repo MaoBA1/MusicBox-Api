@@ -180,7 +180,8 @@ router.post('/login', async(request, response) => {
                     
                     return response.status(200).json({
                         status:true,
-                        message: token
+                        token: token,
+                        isItFirstUse: account.isItFirstUse
                     })
                 } else {
                     return response.status(200).json({
@@ -297,6 +298,7 @@ router.put('/addGenerToFavorite/:generId', auth, async(request, response) => {
             .then(gener => {
                 if(gener) {
                     user.favoritesGeners.push(gener._id)
+                    user.isItFirstUse=false
                     return user.save()
                     .then(user_updated => {
                         return response.status(200).json({
@@ -378,6 +380,9 @@ router.put('/removeGenerFromFavorites/:generId', auth, async(request, response) 
         if(user) { 
             let favoritesGeners = user.favoritesGeners.filter(x => x != generId);                   
             user.favoritesGeners = favoritesGeners
+            if(user.favoritesGeners.length == 0) {
+                user.isItFirstUse=true
+            }
             return user.save()
             .then(user_updated => {
                 return response.status(200).json({
