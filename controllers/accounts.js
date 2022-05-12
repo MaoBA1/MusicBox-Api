@@ -13,8 +13,8 @@ const Song = require('../models/song');
 const maileSender = require('../mailSender');
 
 
-const bodyParser = require('body-parser');
-router.use(bodyParser.json());
+// const bodyParser = require('body-parser');
+// router.use(bodyParser.json());
 
 
 
@@ -51,6 +51,7 @@ router.post('/creatAccount', async(request, response) => {
             const passcode = generateRandomIntegerInRange(1000,9999);
             // Creat user in Mongodb            
             const _user = {
+                _id: mongoose.Types.ObjectId(),
                 email: lowercaseEmail,
                 firstName: firstName,
                 lastName: lastName,

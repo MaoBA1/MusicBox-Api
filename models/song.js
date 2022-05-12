@@ -16,7 +16,8 @@ const songSchema = new Schema({
         }
     ],
     views:{type: Number, default:0},
-    likes:{type: Number, default:0}
+    likes:{type: Number, default:0},
+    creatAdt: {type: Date, default: Date.now}
 })
 
 
