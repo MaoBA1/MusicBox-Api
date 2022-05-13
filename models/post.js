@@ -8,7 +8,7 @@ const postSchema = new Schema({
     postContent: String,
     postMedia: {
         uri:String,
-        format: String
+        format: String,
     },
     creatAdt: {type: Date, default: Date.now},
     likes: [
