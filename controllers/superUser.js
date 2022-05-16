@@ -281,6 +281,13 @@ router.post('/createAlbum', auth, async(request, response) => {
 })
 
 
+router.get('/getAllArtists', auth, async(request, response) => {
+    let artists = await SuperUser.find({})
+    return response.status(200).json({
+        artists: artists
+    })
+})
+
 // 
 //add skill
 // remove skill
