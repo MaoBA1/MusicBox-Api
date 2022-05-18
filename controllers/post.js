@@ -177,4 +177,77 @@ router.put('/unlikePost/:postId', auth, async(request, response) => {
     })
 })
 
+router.get('/getPostById/:postId', auth, async(request, response) => {
+    const postId = request.params.postId;
+    await Post.findById(postId)
+    .then(async post => {
+        return response.status(200).json({
+            Post: post
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            Error: error
+        })
+    })
+})
+
+router.put('/sendComment/:postId', auth, async(request, response) => {
+    const accountId = request.account._id;
+    console.log(accountId);
+    await User.findById(accountId)
+    .then(async account => {
+        if(account) {
+            const postId = request.params.postId;
+            await Post.findById(postId)
+            .then(async post => {
+                if(post) {
+                    const {comment} = request.body;
+                    let commentArray = post.comments;
+                    commentArray.push({
+                        accountId: accountId,
+                        comment: comment,
+                    })
+                    post.comments = commentArray;
+                    return post.save()
+                    .then(post_updated => {
+                        return response.status(200).json({
+                            status: true,
+                            Post: post_updated
+                        })
+                    })
+                    .catch(error => {
+                        return response.status(500).json({
+                            status: false,
+                            Error: error
+                        })
+                    })
+                } else {
+                    return response.status(403).json({
+                        status: false,
+                        message: 'Post Not Found'
+                    })
+                }
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    status: false,
+                    Error: error
+                })
+            })
+        } else {
+            return response.status(403).json({
+                status: false,
+                message: 'User Not Found'
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error
+        })
+    })
+})
+
 module.exports = router;

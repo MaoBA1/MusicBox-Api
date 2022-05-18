@@ -505,7 +505,14 @@ router.put('/removePlaylist/:playlistId', auth, async(request, response) => {
     })
 })
 
-
+router.get('/getAllAcounts', async(request, response) => {
+    await User.find({})
+    .then(Accounts => {
+        return response.status(200).json({
+            Accounts: Accounts
+        })
+    })
+})
 
 
 
