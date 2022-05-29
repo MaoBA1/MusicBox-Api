@@ -81,38 +81,22 @@ router.put('/likePost/:postId', auth, async(request, response) => {
             await Post.findById(postId)
             .then(async post => {
                 if(post) {
-                    const likeArray = post.likes;
-                    let flag = false;
-                    likeArray.forEach(like => {
-                        if(like.type.toString() == accountId.toString()) {
-                            console.log('test');
-                            flag = true;
-                            return;
-                        }
-                    })
-                    if(!flag) {
-                        likeArray.push(accountId);
-                        post.likes = likeArray;
-                        return post.save()
-                        .then(updated_post => {
-                            return response.status(200).json({
-                                status: true,
-                                Post: updated_post
-                            })
-                        })
-                        .catch(error => {
-                            return response.status(500).json({
-                                status: false,
-                                Error: error
-                            })
-                        });
-                    } else {
+                    const likeArray = post.likes;                    
+                    likeArray.push(accountId);
+                    post.likes = likeArray;
+                    return post.save()
+                    .then(updated_post => {
                         return response.status(200).json({
-                            status: false,
-                            message: 'You have already like this post'
+                            status: true,
+                            Post: updated_post
                         })
-                    }
-                    
+                    })
+                    .catch(error => {
+                        return response.status(500).json({
+                            status: false,
+                            Error: error 
+                        })
+                    })
                 } 
             })
         } else {
