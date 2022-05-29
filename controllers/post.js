@@ -176,6 +176,24 @@ router.get('/getPostById/:postId', auth, async(request, response) => {
     })
 })
 
+router.get('/getPostComments/:postId', auth, async(request, response) => {
+    const postId = request.params.postId;
+    await Post.findById(postId)
+    .then(async post => {
+        if(post) {
+            return response.status(200).json({
+                postComments: post.comments
+            })
+        }
+        
+    })
+    .catch(error => {
+        return response.status(500).json({
+            Error: error
+        })
+    })
+})
+
 router.put('/sendComment/:postId', auth, async(request, response) => {
     const accountId = request.account._id;
     console.log(accountId);
