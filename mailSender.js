@@ -13,7 +13,7 @@ const setOptionsAndSendMail = (account, firstName, passcode) => {
         from: "MusicBox@outlook.co.il",
         to: account,
         subject: `Verification Email`,
-        text: `Hello ${firstName}, your passcode is ${passcode}`
+        text: `Hello ${firstName}, your passcode is ${passcode}`,
     };
     
     transporter.sendMail(options, function(err, info) {
