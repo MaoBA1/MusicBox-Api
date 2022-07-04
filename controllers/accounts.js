@@ -48,7 +48,7 @@ router.post('/creatAccount', async(request, response) => {
             const formatted_password = await bycryptjs.hash(password, 10);
             // Generate Passcode
             // we generate verification passcode for the user
-            const passcode = generateRandomIntegerInRange(1000,9999);
+            const passcode = generateRandomIntegerInRange(1000,9999);            
             // Creat user in Mongodb            
             const _user = {
                 _id: mongoose.Types.ObjectId(),
@@ -92,6 +92,7 @@ router.post('/verify', async(request, response) => {
     User.findOne({email : email})
     .then(async account => {
         if(account) {
+            console.log(account.passcode);
             if(account.passcode == inputted_passcode) {
                 console.log('test');
                 // if passcode match we update isApproved property to true
