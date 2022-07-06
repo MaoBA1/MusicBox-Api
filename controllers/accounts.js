@@ -277,6 +277,7 @@ router.post('/updatePassword', async(request, response) => {
 
 router.get('/getUserData', auth, async(request, response) => {
     const userId = request.account._id
+    console.log(userId);
     if(request.account.isSuperUser){   
         const superUser = await SuperUser.findOne({accountId : userId}).populate('accountId')
         return response.status(200).json({
