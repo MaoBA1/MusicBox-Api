@@ -516,7 +516,7 @@ router.get('/getAllAcounts', async(request, response) => {
     })
 })
 
-router.get('getaccountById/:accountId', async(request, response) => {
+router.get('/getaccountById/:accountId', async(request, response) => {
     const accountId = request.params.accountId;
     console.log(accountId);
     await User.findById(accountId)
