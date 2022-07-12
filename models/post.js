@@ -21,6 +21,9 @@ const postSchema = new Schema({
         {
             commentId: mongoose.Schema.Types.ObjectId,
             accountId: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+            accountFirstName: String,
+            accountLastName: String,
+            accountImage: String,
             comment: String,
             commentCreatAdt: {type: Date, default: Date.now}
         }

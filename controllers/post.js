@@ -207,6 +207,9 @@ router.put('/sendComment/:postId', auth, async(request, response) => {
                     const {comment} = request.body;
                     let commentArray = post.comments;
                     commentArray.push({
+                        accountFirstName: account.firstName,
+                        accountLastName: account.lastName,
+                        accountImage: account.Avatar,
                         accountId: accountId,
                         comment: comment,
                     })
