@@ -29,7 +29,7 @@ const url = 'mongodb+srv://kiosk_user:maor1997@cluster0.4l8lk.mongodb.net/MusicB
 mongoose.connect(url)
 .then(results => {
     console.log(results);
-    app.listen(3000, ip, () => {
+    app.listen(process.env.PORT, () => {
         console.log(`Server is listening on port ${port}`);
     });
 })
