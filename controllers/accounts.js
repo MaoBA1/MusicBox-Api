@@ -518,7 +518,20 @@ router.get('/getAllAcounts', async(request, response) => {
 
 router.get('getaccountById/:accountId', async(request, response) => {
     const accountId = request.params.accountId;
-    await User.findById()
+    console.log(accountId);
+    await User.findById(accountId)
+    .then(user => {        
+        return response.status(200).json({
+            User: user
+        })   
+    }).catch(error => {
+        console.log(error);
+        return response.status(500).json({
+            Error: error.message
+        })
+    })
+        
+    
 })
 
 
@@ -530,7 +543,7 @@ router.get('getaccountById/:accountId', async(request, response) => {
 // test
 router.get('/sayHello', (request, response) => {
     response.status(200).json({
-        message: 'Hello World!'
+        message: 'Hello people!'
     })
 })
 
