@@ -286,7 +286,7 @@ router.get('/getUserData', auth, async(request, response) => {
         })
     } else {
         return response.status(200).json({
-            message: request.account
+            account: request.account
         })
     }
 })
