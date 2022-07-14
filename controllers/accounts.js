@@ -282,7 +282,7 @@ router.get('/getUserData', auth, async(request, response) => {
         const superUser = await SuperUser.findOne({accountId : userId}).populate('accountId')
         return response.status(200).json({
             account: request.account,
-            account : superUser
+            superAccount : superUser
         })
     } else {
         return response.status(200).json({
