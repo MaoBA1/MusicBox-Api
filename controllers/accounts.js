@@ -536,6 +536,52 @@ router.get('/getaccountById/:accountId', async(request, response) => {
 })
 
 
+router.put('/updateRegularAccount', auth, async(request, response) => {
+    const accountId = request.account._id;
+    const {
+      firstName,
+      lastName,
+      Avatar,
+      dob,
+      mobile
+    } = request.body;
+    await User.findById(accountId)
+    .then(account => {
+        if(account) {
+            account.firstName = firstName;
+            account.lastName = lastName;
+            account.Avatar = Avatar;
+            account.dob = dob;
+            account.mobile = mobile;
+            return account.save()
+            .then(account_updated => {
+                return response.status(200).json({
+                    status: true,
+                    account: account_updated
+                })
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    status: false,
+                    Error: error
+                })
+            })
+        } else {
+            return response.status(403).json({
+                status: false,
+                message: 'User not found'
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error
+        })
+    })
+})
+
+
 
 
 
