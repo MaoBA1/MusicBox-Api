@@ -48,7 +48,8 @@ router.post('/creatAccount', async(request, response) => {
             const formatted_password = await bycryptjs.hash(password, 10);
             // Generate Passcode
             // we generate verification passcode for the user
-            const passcode = generateRandomIntegerInRange(1000,9999);            
+            const passcode = generateRandomIntegerInRange(1000,9999); 
+            console.log(passcode);           
             // Creat user in Mongodb            
             const _user = {
                 _id: mongoose.Types.ObjectId(),
