@@ -7,8 +7,8 @@ const superUserSchema = new Schema({
     accountId: {type: mongoose.Schema.Types.ObjectId, ref:'User'},
     artistName: String,
     description: String,
-    profileImage:String,
-    profileSeconderyImage: String,
+    profileImage:{type: String, default: 'https://res.cloudinary.com/musicbox/image/upload/v1659536896/default%20user%20profile%20picture/rcnaroocdqtzw3meps2m.png'},
+    profileSeconderyImage: {type: String, default: 'https://res.cloudinary.com/musicbox/image/upload/v1659536896/default%20user%20profile%20picture/rcnaroocdqtzw3meps2m.png'},
     mainGener: {type: mongoose.Schema.Types.ObjectId, ref:'Gener'},  
     additionalGener: [        
          {type: mongoose.Schema.Types.ObjectId, ref:'Gener'},

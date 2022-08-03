@@ -16,7 +16,7 @@ const userSchema = new Schema({
     isLocked: {type: Boolean, default: false},
     isSuperUser:{type: Boolean, default: false},
     isItFirstUse:{type: Boolean, default: true}, 
-    Avatar: {type: String, default: 'https://e7.pngegg.com/pngimages/122/295/png-clipart-open-user-profile-facebook-free-content-facebook-silhouette-avatar-thumbnail.png'},
+    Avatar: {type: String, default: 'https://res.cloudinary.com/musicbox/image/upload/v1659536896/default%20user%20profile%20picture/rcnaroocdqtzw3meps2m.png'},
     favoritesGeners:[
          {type: mongoose.Schema.Types.ObjectId, ref: 'Gener'},
         
