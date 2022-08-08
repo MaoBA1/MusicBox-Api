@@ -357,6 +357,35 @@ router.put('/changeArtistProfileImage', auth, async(request, response) => {
 })
 
 
+router.put('/changeArtistDescription', auth, (request, response) => {
+    const accountId = request.account._id;
+    const description = request.body
+    await SuperUser.findOne({accountId: accountId})
+    .then(artist => {
+        artist.description = description;
+        artist.save()
+        .then(updated_artist => {
+            return response.status(200).json({
+                status: true,
+                Artist: updated_artist
+            })
+        })
+        .catch(error => {
+            return response.status(500).json({
+                status: false,
+                Error: error.message
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
+
+
 
 
 // 
