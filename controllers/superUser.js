@@ -10,10 +10,13 @@ const Song = require('../models/song');
 const Album = require('../models/album');
 const auth = require('./auth');
 
+
+
 const funcs = require('./myFunctions')
 
 router.post('/creatSuperUser', auth, async(request, response) =>{
     const accountId = request.account._id;
+    console.log(request.body);
     SuperUser.findOne({accountId: accountId})
     .then(async artist => {
         if(artist) {
@@ -37,33 +40,38 @@ router.post('/creatSuperUser', auth, async(request, response) =>{
             const isArtistNameInUse = await SuperUser.findOne({artistName: artistName});
             if(isArtistNameInUse) {
                 return response.status(200).json({
-                    message: `${artistName} is already used`
+                    status:false,
+                    message: `${artistName} nick name is already used`
                 });
             } else {
-                const formatted_main_gener = await funcs.getGener(mainGener);
-                const formatted_additional_gener = await funcs.getAdditionalGener(additionalGener)
                 const _superUser = new SuperUser({
                     _id: mongoose.Types.ObjectId(),
                     accountId: accountId,
                     artistName: artistName,
-                    description: description,
-                    profileImage: profileImage,
-                    profileSeconderyImage: profileSeconderyImage,
-                    mainGener: formatted_main_gener,
-                    additionalGener: formatted_additional_gener,
+                    description: description,  
+                    mainGener: mainGener,
+                    additionalGener: additionalGener,
                     skills: skills,
                     albums: albums,
                     singles: singles
-                });
+                }); 
+                if(profileImage) {
+                    _superUser.profileImage = profileImage;
+                }               
+                if(profileSeconderyImage) {
+                    _superUser.profileSeconderyImage = profileSeconderyImage;
+                }
                 _user.save()
                 return _superUser.save()
                 .then(newSuperUser => {
                     return response.status(200).json({
+                        status:true,
                         SuperUser: newSuperUser
                     })
                 })
                 .catch(error => {
                     return response.status(500).json({
+                        status:false,
                         message: error
                     })
                 })
@@ -287,6 +295,69 @@ router.get('/getAllArtists', auth, async(request, response) => {
         artists: artists
     })
 })
+
+
+router.get('/getArtistData', auth, async(request, response) => {
+    const accountId = request.account._id;
+    await SuperUser.findOne({accountId: accountId})
+    .then(artist => {
+        if(artist) {
+            return response.status(200).json({
+                status: true,
+                Artist: artist
+            })
+        } else {
+            return response.status(403).json({
+                status: false,
+                message: `This account dosn't recognize as an artist`
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
+
+
+
+router.put('/changeArtistProfileImage', auth, async(request, response) => {
+    const accountId = request.account._id;
+    const {image, type} = request.body;
+    await SuperUser.findOne({accountId: accountId})
+    .then(artist => {
+        if(type === 'main') {
+            artist.profileImage = image;
+        } else {
+            artist.profileSeconderyImage = image;
+        }
+        
+        artist.save()
+        .then(updated_artist => {
+            return response.status(200).json({
+                status: true,
+                Artist: updated_artist
+            })
+        })
+        .catch(error => {
+            return response.status(500).json({
+                status: false,
+                Error: error.message
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
+
+
+
 
 // 
 //add skill
