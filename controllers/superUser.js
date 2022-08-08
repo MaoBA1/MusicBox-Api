@@ -357,9 +357,10 @@ router.put('/changeArtistProfileImage', auth, async(request, response) => {
 })
 
 
-router.put('/changeArtistDescription', auth, (request, response) => {
+router.put('/changeArtistDescription', auth, async(request, response) => {
     const accountId = request.account._id;
-    const description = request.body
+    const {description} = request.body
+    console.log(description);
     await SuperUser.findOne({accountId: accountId})
     .then(artist => {
         artist.description = description;
