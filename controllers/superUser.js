@@ -386,6 +386,34 @@ router.put('/changeArtistDescription', auth, async(request, response) => {
     })
 })
 
+router.put('/changeArtistMainGener', auth, async(request, response) => {
+    const accountId = request.account._id;
+    const {gener} = request.body;
+    await SuperUser.findOne({accountId: accountId})
+    .then(artist => {
+        artist.mainGener = gener;
+        artist.save()
+        .then(updated_artist => {
+            return response.status(200).json({
+                status: true, 
+                Artist: updated_artist
+            })
+        })
+        .catch(error => {
+            return response.status(500).json({
+                status: false,
+                Error: error.message
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
+
 
 
 
