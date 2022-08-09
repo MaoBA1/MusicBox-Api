@@ -391,11 +391,148 @@ router.put('/changeArtistMainGener', auth, async(request, response) => {
     const {gener} = request.body;
     await SuperUser.findOne({accountId: accountId})
     .then(artist => {
+        console.log(artist.mainGener);
         artist.mainGener = gener;
+        console.log(artist.mainGener);
         artist.save()
         .then(updated_artist => {
             return response.status(200).json({
                 status: true, 
+                Artist: updated_artist
+            })
+        })
+        .catch(error => {
+            return response.status(500).json({
+                status: false,
+                Error: error.message
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
+
+
+router.put('/addGenerToArtistAdditionalGeners', auth, async(request, response) => {
+    const accountId = request.account._id;
+    const {gener} = request.body;
+    console.log(gener);
+    await SuperUser.findOne({accountId: accountId})
+    .then(artist => {
+        let additionalGener = artist.additionalGener;
+        additionalGener.push(gener);
+        artist.additionalGener = additionalGener
+        artist.save()
+        .then(updated_artist => {
+            return response.status(200).json({
+                status: true,
+                Artist: updated_artist
+            })
+        })
+        .catch(error => {
+            return response.status(500).json({
+                status: false,
+                Error: error.message
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
+
+router.put('/removeGenerToArtistAdditionalGeners', auth, async(request, response) => {
+    const accountId = request.account._id;
+    const {gener} = request.body;
+    
+    await SuperUser.findOne({accountId: accountId})
+    .then(artist => {
+        let additionalGener = [];
+        artist.additionalGener.forEach(gen => {
+            if(gen._id != gener._id) {
+                additionalGener.push(gen);
+            }
+        });
+        artist.additionalGener = additionalGener
+        artist.save()
+        .then(updated_artist => {
+            return response.status(200).json({
+                status: true,
+                Artist: updated_artist
+            })
+        })
+        .catch(error => {
+            return response.status(500).json({
+                status: false,
+                Error: error.message
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
+
+
+router.put('/addSkillToArtistSkills', auth, async(request, response) => {
+    const accountId = request.account._id;
+    const {skill} = request.body;
+    
+    await SuperUser.findOne({accountId: accountId})
+    .then(artist => {
+        let skills = artist.skills;
+        skills.push(skill);
+        artist.skills = skills;
+        artist.save()
+        .then(updated_artist => {
+            return response.status(200).json({
+                status: true,
+                Artist: updated_artist
+            })
+        })
+        .catch(error => {
+            return response.status(500).json({
+                status: false,
+                Error: error.message
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
+
+
+router.put('/removeSkillFromArtistSkills', auth, async(request, response) => {
+    const accountId = request.account._id;
+    const {skill} = request.body;
+    
+    await SuperUser.findOne({accountId: accountId})
+    .then(artist => {
+        let skills = [];
+        artist.skills.forEach(skillItem => {
+            if(skillItem != skill) {
+                skills.push(skillItem);
+            }
+        });
+        artist.skills = skills
+        artist.save()
+        .then(updated_artist => {
+            return response.status(200).json({
+                status: true,
                 Artist: updated_artist
             })
         })

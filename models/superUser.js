@@ -9,16 +9,15 @@ const superUserSchema = new Schema({
     description: String,
     profileImage:{type: String, default: 'https://res.cloudinary.com/musicbox/image/upload/v1659536896/default%20user%20profile%20picture/rcnaroocdqtzw3meps2m.png'},
     profileSeconderyImage: {type: String, default: 'https://res.cloudinary.com/musicbox/image/upload/v1659536896/default%20user%20profile%20picture/rcnaroocdqtzw3meps2m.png'},
-    mainGener: [        
-        {
-            generId: {type: mongoose.Schema.Types.ObjectId, ref:'Gener'},
+    mainGener: {
+            _id: {type: mongoose.Schema.Types.ObjectId, ref:'Gener'},
             generName:String,
             generImage: String
-        },
-    ], 
+    },
+    
     additionalGener: [        
         {
-            generId: {type: mongoose.Schema.Types.ObjectId, ref:'Gener'},
+            _id: {type: mongoose.Schema.Types.ObjectId, ref:'Gener'},
             generName:String,
             generImage: String
         },
