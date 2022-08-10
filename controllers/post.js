@@ -7,14 +7,14 @@ const SuperUser = require('../models/superUser');
 const auth = require('./auth');
 
 
-router.post('/uploadNewPost/:artistId', auth, async(request, response) => {
-    const artistId = request.params.artistId;
+router.post('/uploadNewPost', auth, async(request, response) => {
+    const accountId = request.account._id;
     const {
         postContent,
         uri,
         format
     } = request.body;
-    await SuperUser.findById(artistId)
+    await SuperUser.findOne({accountId: accountId})
     .then(artist => {
         if(artist) {
              const _post = new Post({
