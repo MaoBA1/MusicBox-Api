@@ -255,4 +255,22 @@ router.put('/sendComment/:postId', auth, async(request, response) => {
     })
 })
 
+
+router.get('/getAllArtistPosts/:artistId', auth, async(request, response) => {
+    const artistId = request.params.artistId;
+    await Post.find({postAuthorId: artistId})
+    .then(posts => {
+        return response.status(200).json({
+            status: true,
+            Posts: posts
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+} )
+
 module.exports = router;
