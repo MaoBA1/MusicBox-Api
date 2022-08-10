@@ -19,7 +19,7 @@ router.post('/uploadNewPost', auth, async(request, response) => {
         if(artist) {
              const _post = new Post({
                 _id: mongoose.Types.ObjectId(),
-                postAuthorId: artistId,
+                postAuthorId: artist._id,
                 postAuthorName: artist.artistName,
                 postContent: postContent,
                 postMedia: {
