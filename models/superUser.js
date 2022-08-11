@@ -32,7 +32,12 @@ const superUserSchema = new Schema({
     ],
     singles: [
         {
-           track: {type: mongoose.Schema.Types.ObjectId, ref:'Song'},
+           _id: {type: mongoose.Schema.Types.ObjectId, ref:'Song'},
+           trackName: String,
+           trackLength: Number,
+           trackImage: String,
+           trackUri: String,
+           creatAdt: {type: Date, default: Date.now}
         }
     ],
 });

@@ -8,7 +8,7 @@ const Song = require('../models/song');
 const Album = require('../models/album');
 const auth = require('./auth');
 
-router.post('/creatNewSong/:generId', auth, async (request, response) => {
+router.post('/creatNewSong', auth, async (request, response) => {
     const accountId = request.account._id;
     User.findById(accountId)
     .then(async user => {
@@ -21,9 +21,8 @@ router.post('/creatNewSong/:generId', auth, async (request, response) => {
                         trackLength,
                         trackImage,
                         trackUri,
-                        trackTags
+                        trackTags,generId
                     } = request.body;                    
-                    const generId = request.params.generId;
                     const _song = new Song({
                         _id: mongoose.Types.ObjectId(),
                         trackName: trackName,
@@ -35,32 +34,37 @@ router.post('/creatNewSong/:generId', auth, async (request, response) => {
                         gener: generId,
                         trackTags: trackTags
                     })
-                    artist.singles.push(_song._id);
+                    artist.singles.push(_song);
                     artist.save();
-                    return _song.save()
+                     _song.save()
                     .then(newSong => {
                         return response.status(200).json({
+                            status: true,
                             Song: newSong
                         })
                     })
                     .catch(error => {
                         return response.status(500).json({
+                            status: false,
                             Error: error
                         })
                     })
                 } else {
                     return response.status(200).json({
+                        status: false,
                         message: 'Your account not recognize as artist'
                     })
                 }
             })
             .catch(error => {
                 return response.status(500).json({
+                    status: false,
                     Error: error
                 })
             })
         } else {
             return response.status(403).json({
+                status: false,
                 message: 'user not found'
             })
         }
