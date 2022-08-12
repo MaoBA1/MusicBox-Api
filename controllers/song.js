@@ -150,22 +150,26 @@ router.get('/getAllArtistSong/:artistId', auth, async(request, response) => {
             Song.find({artistId: artist._id})
             .then(artistSongList => {
                 return response.status(200).json({
+                    status: true,
                     ArtistSongs: artistSongList
                 })
             })
             .catch(error => {
                 return response.status(500).json({
+                    status: false,
                     Error: error
                 })
             })
         } else {
             return response.status(403).json({
+                status: false,
                 message: 'Artist not found'
             })
         }
     })
     .catch(error => {
         return response.status(500).json({
+            status: false,
             Error: error
         })
     })
