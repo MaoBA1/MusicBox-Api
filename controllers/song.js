@@ -22,7 +22,8 @@ router.post('/creatNewSong', auth, async (request, response) => {
                         trackImage,
                         trackUri,
                         trackTags,gener
-                    } = request.body;                    
+                    } = request.body;  
+                    console.log(request.body);                  
                     const _song = new Song({
                         _id: mongoose.Types.ObjectId(),
                         trackName: trackName,
@@ -34,7 +35,9 @@ router.post('/creatNewSong', auth, async (request, response) => {
                         gener: gener,
                         trackTags: trackTags
                     })
-                    artist.singles.push(_song);
+                    let artistSingles = artist.singles;
+                    artistSingles.push(_song);
+                    artist.singles = artistSingles; 
                     artist.save();
                      _song.save()
                     .then(newSong => {
