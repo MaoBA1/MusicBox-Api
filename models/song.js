@@ -6,7 +6,7 @@ const songSchema = new Schema({
     trackName: String,
     artistName: String,
     artistId: {type:mongoose.Schema.Types.ObjectId, ref:'SuperUser'},
-    trackLength: Number,
+    trackLength: String,
     trackImage: {type: String, default: 'https://res.cloudinary.com/musicbox/image/upload/v1659536896/default%20user%20profile%20picture/rcnaroocdqtzw3meps2m.png'},
     trackUri: String,
     gener: {type:mongoose.Schema.Types.ObjectId, ref:'Gener'},
