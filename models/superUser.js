@@ -40,6 +40,16 @@ const superUserSchema = new Schema({
            creatAdt: {type: Date, default: Date.now}
         }
     ],
+    playlists: [
+        {
+           _id: {type: mongoose.Schema.Types.ObjectId, ref:'Song'},
+           trackName: String,
+           trackLength: Number,
+           trackImage: String,
+           trackUri: String,
+           creatAdt: {type: Date, default: Date.now}
+        }
+    ],
 });
 
 

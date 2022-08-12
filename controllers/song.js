@@ -7,6 +7,7 @@ const Gener = require('../models/gener');
 const Song = require('../models/song');
 const Album = require('../models/album');
 const auth = require('./auth');
+const moment = require('moment');
 
 router.post('/creatNewSong', auth, async (request, response) => {
     const accountId = request.account._id;
@@ -423,7 +424,60 @@ router.put('/addSongToAlbum/:albumId/:songId', auth, async(request, response) =>
 })
 
 
+router.get('/getArtistLatestReleases/:artistId', auth, async(request, response) => {
+    const artistId = request.params.artistId;
+    SuperUser.findOne({_id: artistId}) 
+    .then(artist => {
+        if(artist) {
+            Song.find({artistId: artistId})
+            .then(artistSongList => {
+                let songList = artistSongList.sort((a, b) => (new Date(b.creatAdt) - new Date(a.creatAdt)));
+                songList.slice(0,10)
+                return response.status(200).json({
+                    status: true,
+                    Songs: songList
+                })
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    status: false,
+                    Error: error
+                })
+            })
+        } else {
+            return response.status(403).json({
+                status: false,
+                message: 'Artist not found'
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error
+        })
+    })
+})
 
+router.get('/getArtistTop5Songs/:artistId', auth, async(request, response) => {
+    const artistId = request.params.artistId;
+    console.log(artistId);
+    Song.find({artistId: artistId})
+    .then(songs => {
+        let songList = songs.sort((a,b) => (b.likes.length - a.likes.length))
+        songList = songList.slice(0,5);
+        return response.status(200).json({
+            status: true,
+            Songs: songList
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
 
 
 
