@@ -9,7 +9,11 @@ const songSchema = new Schema({
     trackLength: String,
     trackImage: {type: String, default: 'https://res.cloudinary.com/musicbox/image/upload/v1659536896/default%20user%20profile%20picture/rcnaroocdqtzw3meps2m.png'},
     trackUri: String,
-    gener: {type:mongoose.Schema.Types.ObjectId, ref:'Gener'},
+    gener: {
+            _id: {type: mongoose.Schema.Types.ObjectId, ref:'Gener'},
+            generName:String,
+            generImage: String
+    },
     trackTags:[
         {
            type: String,
