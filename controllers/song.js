@@ -464,7 +464,8 @@ router.get('/getArtistTop5Songs/:artistId', auth, async(request, response) => {
     console.log(artistId);
     Song.find({artistId: artistId})
     .then(songs => {
-        let songList = songs.sort((a,b) => (b.likes.length - a.likes.length))
+        let songList = songs.filter(song => song.likes.length > 0);
+        songList = songList.sort((a,b) => (b.likes.length - a.likes.length))
         songList = songList.slice(0,5);
         return response.status(200).json({
             status: true,
