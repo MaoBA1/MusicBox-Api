@@ -42,12 +42,15 @@ const superUserSchema = new Schema({
     ],
     playlists: [
         {
-           _id: {type: mongoose.Schema.Types.ObjectId, ref:'Song'},
-           trackName: String,
-           trackLength: Number,
-           trackImage: String,
-           trackUri: String,
-           creatAdt: {type: Date, default: Date.now}
+           _id: mongoose.Schema.Types.ObjectId,
+           playlistName: String,
+           track:{
+            trackName: String,
+            trackLength: Number,
+            trackImage: String,
+            trackUri: String,
+            creatAdt: {type: Date, default: Date.now}
+           }
         }
     ],
 });
