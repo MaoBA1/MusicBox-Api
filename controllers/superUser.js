@@ -551,6 +551,31 @@ router.put('/removeSkillFromArtistSkills', auth, async(request, response) => {
     })
 })
 
+router.put('/createNewPlaylist', auth, async(request, response) => {
+    const accountId = request.account._id;
+    const { playlist } = request.body;
+    await SuperUser.findOne({accountId: accountId})
+    .then(artist => {
+        let playlists = artist.playlists;
+        playlists.push(playlist);
+        artist.playlists = playlists;
+        artist.playlists
+        artist.save()
+        .then(updated_artist => {
+            return response.status(200).json({
+                status: true,
+                playlists: updated_artist.playlists
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
+
 
 
 
