@@ -44,14 +44,17 @@ const superUserSchema = new Schema({
         {
            _id: mongoose.Schema.Types.ObjectId,
            playlistName: String,
-           playlistImage: String,
-           track:{
-            trackName: String,
-            trackLength: Number,
-            trackImage: String,
-            trackUri: String,
-            creatAdt: {type: Date, default: Date.now}
-           }
+           playlistImage: {type: String, default: 'https://res.cloudinary.com/musicbox/image/upload/v1659536896/default%20user%20profile%20picture/rcnaroocdqtzw3meps2m.png'},
+           tracks: [
+                {
+                    trackName: String,
+                    trackLength: Number,
+                    trackImage: String,
+                    trackUri: String,
+                    creatAdt: {type: Date, default: Date.now}
+                }
+           ]
+           
         }
     ],
 });
