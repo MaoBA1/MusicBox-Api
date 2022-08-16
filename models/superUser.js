@@ -44,6 +44,7 @@ const superUserSchema = new Schema({
         {
            _id: mongoose.Schema.Types.ObjectId,
            playlistName: String,
+           playlistImage: String,
            track:{
             trackName: String,
             trackLength: Number,
