@@ -556,8 +556,14 @@ router.put('/createNewPlaylist', auth, async(request, response) => {
     const { playlist } = request.body;
     await SuperUser.findOne({accountId: accountId})
     .then(artist => {
+        const formattedPlaylist = {
+            _id:mongoose.Types.ObjectId(),
+            playlistName: playlist.playlistName,
+            playlistImage: playlist.playlistImage,
+            tracks: playlist.tracks
+        }
         let playlists = artist.playlists;
-        playlists.push(playlist);
+        playlists.push(formattedPlaylist);
         artist.playlists = playlists;
         artist.playlists
         artist.save()
@@ -572,6 +578,17 @@ router.put('/createNewPlaylist', auth, async(request, response) => {
         return response.status(500).json({
             status: false,
             Error: error.message
+        })
+    })
+})
+
+router.get('/getArtistPlayList', auth, async(request, response) => {
+    const accountId = request.account._id;
+    await SuperUser.findOne({accountId: accountId})
+    .then(artist => {
+        return response.status(200).json({
+            status: true,
+            playlists: artist.playlists
         })
     })
 })
