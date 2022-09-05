@@ -48,9 +48,15 @@ const superUserSchema = new Schema({
            tracks: [
                 {
                     trackName: String,
-                    trackLength: Number,
+                    trackLength: String,
                     trackImage: String,
                     trackUri: String,
+                    likes:[
+                        {
+                            type: mongoose.Schema.Types.ObjectId,
+                            ref: 'User'
+                        }
+                    ],
                     creatAdt: {type: Date, default: Date.now}
                 }
            ]
