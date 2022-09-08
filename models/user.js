@@ -28,10 +28,19 @@ const userSchema = new Schema({
         {
             _id: mongoose.Schema.Types.ObjectId,
             playlistName: String,
+            playlistImage: {type:String, default:'https://res.cloudinary.com/musicbox/image/upload/v1659536896/default%20user%20profile%20picture/rcnaroocdqtzw3meps2m.png'},
             songs:[
                 { 
+                    _id: mongoose.Schema.Types.ObjectId,
                     trackName: String,
-                    _id: {type: mongoose.Schema.Types.ObjectId, ref: 'Song'}
+                    trackImage: {type: String, default: 'https://res.cloudinary.com/musicbox/image/upload/v1662455136/default%20user%20profile%20picture/tkab56xuyk7aq1j9l8lg.png'},
+                    trackUri: String,
+                    trackLength: String,
+                    artist:{
+                        artistName: String,
+                        artistId: {type:mongoose.Schema.Types.ObjectId, ref:'SuperUser'},
+                    },
+                    creatAdt: {type: Date, default: Date.now}
                 }
             ]            
         }

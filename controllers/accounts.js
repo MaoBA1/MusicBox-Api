@@ -451,36 +451,6 @@ router.put('/removeSubscribe/:artistId', auth, async(request, response) => {
 })
 
 
-router.put('/createNewPlaylist', auth, async(request, response) => {
-    const accountId = request.account._id;
-    User.findById(accountId)
-    .then(async user => {
-        if(user) {
-            const playlistName = request.body.playlistName;
-            user.playlists.push({_id: mongoose.Types.ObjectId(), playlistName: playlistName, songs: []})
-            return user.save()
-            .then(user_updated => {
-                return response.status(200).json({
-                    User: user_updated
-                })
-            })
-            .catch(error => {
-                return response.status(500).json({
-                    Error: error
-                })
-            })
-        } else {
-            return response.status(403).json({
-                message: 'User not found'
-            })
-        }
-    })
-    .catch(error => {
-        return response.status(500).json({
-            Error: error
-        })
-    })
-})
 
 router.put('/removePlaylist/:playlistId', auth, async(request, response) => {
     const accountId = request.account._id;
@@ -582,6 +552,133 @@ router.put('/updateRegularAccount', auth, async(request, response) => {
     })
 })
 
+
+
+// router.put('/addSongToPlaylsit')
+router.put('/createNewPlaylist', auth, async(request, response) => {
+    const accountId = request.account._id;
+    User.findById(accountId)
+    .then(account => {
+        if(account) {
+            const { playlist } = request.body;
+            const newPlaylist = {
+                _id: mongoose.Types.ObjectId(),
+                playlistName: playlist.playlistName,
+                playlistImage: playlist.playlistImage,
+                songs:[
+                    {
+                        _id: mongoose.Types.ObjectId(),
+                        trackName: playlist.song.trackName,
+                        trackUri: playlist.song.trackUri,
+                        trackLength: playlist.song.trackLength,
+                        artist: playlist.song.artist,
+                        creatAdt: playlist.song.creatAdt,
+                    }
+                ]
+            }
+            let userPlaylists = account.playlists;
+            userPlaylists.push(newPlaylist);
+            account.playlists = userPlaylists;
+            return account.save()
+            .then(account_updated => {
+                return response.status(200).json({
+                    status: true,
+                    Playlists: account_updated.playlists
+                })
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    status: false,
+                    Error: error.message
+                })
+            })
+        } else {
+            return response.status(403).json({
+                status: false,
+                message: 'User not found'
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
+
+
+router.put('/addSongToUserPlaylist/:playlistId', auth, async(request, response) => {
+    const accountId = request.account._id;
+    User.findById(accountId)
+    .then(async account => {
+        if(account) {
+            const { playlistId } = request.params;
+            const { song } = request.body;            
+            let userPlaylists = account.playlists;
+            console.log('====================================');
+            console.log(userPlaylists, playlistId);
+            console.log('====================================');
+            userPlaylists.forEach(playlist => {
+                if(playlist._id.toString() === playlistId.toString()){
+                    console.log(playlist);
+                    playlist.songs.push(song)       
+                }
+            })
+            account.playlists = userPlaylists;
+            return account.save()
+            .then(account_updated => {
+                return response.status(200).json({
+                    status: true,
+                    Playlists: account_updated.playlists
+                })
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    status: false,
+                    Error: error.message
+                })
+            })
+        } else {
+            return response.status(403).json({
+                status: false,
+                message: 'User not found'
+            });
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
+
+
+router.get('/getAllUserPlaylists', auth, async (request, response) => {
+    console.log('test');
+    const accountId = request.account._id;
+    User.findById(accountId)
+    .then(account => {
+        if(account) {
+            return response.status(200).json({
+                status: true,
+                Playlists: account.playlists
+            })
+        } else {
+            return response.status(403).json({
+                status: false,
+                message:'User not found'
+            })
+        }
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
 
 
 

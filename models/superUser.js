@@ -37,7 +37,8 @@ const superUserSchema = new Schema({
            trackLength: Number,
            trackImage: String,
            trackUri: String,
-           creatAdt: {type: Date, default: Date.now}
+           creatAdt: {type: Date, default: Date.now},
+           likes:{type: Number, default:0}
         }
     ],
     playlists: [

@@ -6,27 +6,28 @@ const albumSchema = new Schema({
     _id: mongoose.Schema.Types.ObjectId,
     associatedArtist: {type: mongoose.Schema.Types.ObjectId, ref:'SuperUser'},
     albumName: String,
-    albumDescription: String,
-    albumCover: String,
+    albumCover: {type: String, default: 'https://res.cloudinary.com/musicbox/image/upload/v1659536896/default%20user%20profile%20picture/rcnaroocdqtzw3meps2m.png'},
     releaseDate: {type: Date, default: Date.now},
-    releaseLabel: String,
     tracks:[
         {
             _id: mongoose.Schema.Types.ObjectId,
             trackName: String,
             artistName: String,
             artistId: {type:mongoose.Schema.Types.ObjectId, ref:'SuperUser'},
-            trackLength: Number,
+            trackLength: String,
             trackImage: String,
-            trackUri: String,
-            gener: {type:mongoose.Schema.Types.ObjectId, ref:'Gener'},
-            trackTags:[
+            trackUri: String,   
+            gener: {
+                _id: {type: mongoose.Schema.Types.ObjectId, ref:'Gener'},
+                generName:String,
+                generImage: String
+            },         
+            likes:[
                 {
-                   type: String
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'User'
                 }
             ],
-            views:{type: Number, default:0},
-            likes:{type: Number, default:0}
         }
     ],
 });

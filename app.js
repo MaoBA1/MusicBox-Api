@@ -10,6 +10,7 @@ const superAccount = require('./controllers/superUser');
 const generRouter = require('./controllers/gener');
 const songRouter = require('./controllers/song');
 const postRouter = require('./controllers/post');
+const albumRouter = require('./controllers/album');
 app.use(
     cors({
         origin: '*'
@@ -23,7 +24,8 @@ app.use('/api/accounts', accountRouter);
 app.use('/api/superUser', superAccount);
 app.use('/api/gener', generRouter);
 app.use('/api/song', songRouter);
-app.use('/api/post', postRouter)
+app.use('/api/post', postRouter);
+app.use('/api/album', albumRouter);
 
 const url = 'mongodb+srv://kiosk_user:maor1997@cluster0.4l8lk.mongodb.net/MusicBox_db?retryWrites=true&w=majority';
 mongoose.connect(url)
