@@ -432,7 +432,7 @@ router.get('/getArtistLatestReleases/:artistId', auth, async(request, response) 
             Song.find({artistId: artistId})
             .then(artistSongList => {
                 let songList = artistSongList.sort((a, b) => (new Date(b.creatAdt) - new Date(a.creatAdt)));
-                songList.slice(0,10)
+                songList.slice(0,5)
                 return response.status(200).json({
                     status: true,
                     Songs: songList
