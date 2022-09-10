@@ -593,6 +593,17 @@ router.get('/getArtistPlayList', auth, async(request, response) => {
     })
 })
 
+router.get('/getArtistPlayListById/:artistId', auth, async(request, response) => {
+    const artistId = request.params.artistId;
+    await SuperUser.findOne({accountId: artistId})
+    .then(artist => {
+        return response.status(200).json({
+            status: true,
+            playlists: artist.playlists
+        })
+    })
+})
+
 
 
 
