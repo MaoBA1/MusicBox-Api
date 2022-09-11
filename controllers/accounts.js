@@ -573,6 +573,7 @@ router.put('/createNewPlaylist', auth, async(request, response) => {
                         trackLength: playlist.song.trackLength,
                         artist: playlist.song.artist,
                         creatAdt: playlist.song.creatAdt,
+                        trackImage: playlist.song.trackImage
                     }
                 ]
             }
