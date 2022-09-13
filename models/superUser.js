@@ -64,6 +64,11 @@ const superUserSchema = new Schema({
            
         }
     ],
+    subscribes: [        
+        {
+            _id: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+        }
+    ],
 });
 
 

@@ -22,7 +22,9 @@ const userSchema = new Schema({
         
     ],
     subscribes: [        
-        {type: mongoose.Schema.Types.ObjectId, ref: 'SuperUser'},        
+        {
+            artistId: {type: mongoose.Schema.Types.ObjectId, ref: 'SuperUser'}
+        }
     ],
     playlists: [
         {

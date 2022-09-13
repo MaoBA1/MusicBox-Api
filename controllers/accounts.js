@@ -681,8 +681,96 @@ router.get('/getAllUserPlaylists', auth, async (request, response) => {
     })
 })
 
+router.get('/getAllUserSubScribes', auth, async (request, response) => {
+    const accountId = request.account._id;
+    await User.findById(accountId)
+    .then(async account => {
+        await SuperUser.find({})
+        .then(async allArtists => {
+            let accountSubs = account.subscribes;
+            let artists = []
+            accountSubs.forEach(async x => {
+                let artist = allArtists.filter(y => y._id.toString() === x._id.toString());
+                artist = artist[0];
+                artists.push(artist);
+            })
+            
+            return response.status(200).json({
+                status: true,
+                Subscribes: artists
+            })
+            
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
 
+router.put('/subscribeToArtistPage/:artistId', auth, async (request, response) => {
+    const accountId = request.account._id;
+    const artistId = request.params.artistId;
+    await User.findById(accountId)
+    .then(async account => {
+        let accountSubs = account.subscribes;
+        accountSubs.push({_id: artistId});
+        await SuperUser.findById(artistId)
+        .then(artist => {
+            let artistSubs = artist.subscribes;
+            artistSubs.push({_id: accountId})
+            account.subscribes = accountSubs;
+            artist.subscribes = artistSubs;
+            artist.save();
+            return account.save()
+            .then(account_updated => {
+                return response.status(200).json({
+                    status: true,
+                    Subscribes: account_updated.subscribes
+                })
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error
+        })
+    })
+})
 
+router.put('/unsubscribeFromArtistPage/:artistId', auth, async(request, response) => {
+    const accountId = request.account._id;
+    const artistId = request.params.artistId;
+    await User.findById(accountId)
+    .then(async account => {
+        let accountSubs = account.subscribes;
+        accountSubs = accountSubs.filter(x => x._id.toString() !== artistId.toString());
+        await SuperUser.findById(artistId)
+        .then(artist => {
+            let artistSubs = artist.subscribes;
+            artistSubs = artistSubs.filter(x => x._id.toString() !== accountId.toString());
+            account.subscribes = accountSubs;
+            artist.subscribes = artistSubs;
+            artist.save();
+            return account.save()
+            .then(account_updated => {
+                return response.status(200).json({
+                    status: true,
+                    Subscribes: account_updated.subscribes
+                })
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
 
 
 

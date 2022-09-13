@@ -481,6 +481,39 @@ router.get('/getArtistTop5Songs/:artistId', auth, async(request, response) => {
 })
 
 
+router.get('/getSongsByUserFavoritesGeners', auth, async(request, response) => {
+    const accountId = request.account._id;
+    await User.findById(accountId)
+    .then(async account => {
+        let accountFavoriteGeners = account.favoritesGeners;
+        let list = [];
+        await Gener.find({})
+        .then(async geners => {
+            await Song.find({})
+            .then(songs => {
+                accountFavoriteGeners.forEach(async (item, index) => {
+                    let currentGener = geners.filter(x => x._id.toString() === item._id.toString());
+                    let songsByCurrentGener = songs.filter(x => x.gener._id.toString() === currentGener[0]._id.toString());
+                    list.push({
+                        gener:currentGener[0],
+                        songs: songsByCurrentGener
+                    })
+                })
+                return response.status(200).json({
+                    status:true,
+                    List: list
+                })
+            })
+        })
+        
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
 
 
 

@@ -605,7 +605,50 @@ router.get('/getArtistPlayListById/:artistId', auth, async(request, response) =>
     })
 })
 
+router.get('/getAllArtistByUserFavoritesGeners', auth, async(request, response) => {
+    const accountId = request.account._id;
+    await User.findById(accountId)
+    .then(async account => {
+        let accountFavoriteGeners = account.favoritesGeners;
+        let list = [];
+        await Gener.find({})
+        .then(async geners => {
+            await SuperUser.find({})
+            .then(artists => {
+                accountFavoriteGeners.forEach(async (item, index) => {
+                    let currentGener = geners.filter(x => x._id.toString() === item._id.toString());
+                    let Artists = artists.filter(x => x.mainGener._id.toString() === currentGener[0]._id.toString());
+                    list.push({
+                        gener:currentGener[0],
+                        artists: Artists
+                    })
+                })
+                return response.status(200).json({
+                    status:true,
+                    List: list
+                })
+            })
+        })
+        
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
 
+router.get('/getArtistSubs/:artistId', auth, async(request, response) => {
+    const artistId = request.params.artistId;
+    await SuperUser.findById(artistId)
+    .then(artist => {
+        return response.status(200).json({
+            status: true,
+            Subscribes: artist.subscribes
+        })
+    })
+})
 
 
 // 
