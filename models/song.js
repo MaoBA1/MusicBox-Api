@@ -22,8 +22,10 @@ const songSchema = new Schema({
     views:{type: Number, default:0},
     likes:[
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
+            _id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            }
         }
     ],
     creatAdt: {type: Date, default: Date.now}

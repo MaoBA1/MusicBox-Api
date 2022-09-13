@@ -772,7 +772,111 @@ router.put('/unsubscribeFromArtistPage/:artistId', auth, async(request, response
     })
 })
 
+router.put('/likeToSong/:songId', auth, async(request, response) => {
+    const accountId = request.account._id;
+    const songId = request.params.songId;
+    await User.findById(accountId)
+    .then(async account => {
+        await Song.findById(songId)
+        .then(async song => {
+            let accountPlaylist = account.playlists;
+            let liskelist = account.playlists.filter(x => x.playlistName === "Songs That You Liked")
+            if(liskelist.length > 0) {
+                accountPlaylist[0].songs.unshift({
+                    _id: songId,
+                    trackName: song.trackName,
+                    trackImage: song.trackImage,
+                    trackUri: song.trackUri,
+                    trackLength: song.trackLength,
+                    artist: song.artist,
+                    creatAdt: song.creatAdt,
+                })
+            } else {
+                accountPlaylist.unshift({
+                    _id: mongoose.Types.ObjectId(),
+                    playlistName:"Songs That You Liked",
+                    playlistImage:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCeA_qaLWx6scu7P6tZVr0V6SSasIxWETNAA&usqp=CAU",
+                    songs:[
+                        {
+                            _id: songId,
+                            trackName: song.trackName,
+                            trackImage: song.trackImage,
+                            trackUri: song.trackUri,
+                            trackLength: song.trackLength,
+                            artist: song.artist,
+                            creatAdt: song.creatAdt,
+                        }
+                    ]
+                })
+            }
+            song.likes.push({_id: accountId});
+            song.save();
+            account.playlist = accountPlaylist;
+            return account.save()
+            .then(account_updated => {
+                return response.status(200).json({
+                    status: true,
+                    Songs:account_updated.playlists[0]
+                })
+            })
+            
+        })
+        .catch(error => {
+            return response.status(500).json({
+                status: false,
+                Error: error.message
+            })
+        })
+    })
+})
 
+router.put('/unlikeToSong/:songId', auth, async(request, response) => {
+    const accountId = request.account._id;
+    const songId = request.params.songId;
+    await User.findById(accountId)
+    .then(async account => {
+        await Song.findById(songId)
+        .then(async song => {
+            song.likes = song.likes.filter(x => x._id.toString() !== accountId.toString());
+            account.playlists[0].songs = account.playlists[0].songs.filter(x => x._id.toString() !== songId.toString());
+            if(account.playlists[0].songs.length === 0) {
+                account.playlists = account.playlists.slice(1, account.playlists.length);
+            }
+            song.save();
+            return account.save()
+            .then(account_updated => {
+                return response.status(200).json({
+                    status: true,
+                    Songs: account_updated.playlists
+                })
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
+
+router.get('/getUserFavoriteSong', auth, async(request, response) => {
+    const accountId = request.account._id;
+    await User.findById(accountId)
+    .then(account => {
+        let songsThatYouLiked = account.playlists.filter(x => x.playlistName === "Songs That You Liked");
+        return response.status(200).json({
+            status: true,
+            Playlist: songsThatYouLiked
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error.message
+        })
+    })
+})
 
 // test
 router.get('/sayHello', (request, response) => {
