@@ -900,7 +900,7 @@ router.get('/getSearchResult', auth, async(request, response) => {
         type: "artist"
     });
     songs = songs.map(x => x = {
-        _id: mongoose.Schema.Types.ObjectId,
+        _id: x._id,
         name: x.trackName,
         artistName: x.artistName,
         artistId: x.artistId,
