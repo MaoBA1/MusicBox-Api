@@ -881,7 +881,6 @@ router.get('/getUserFavoriteSong', auth, async(request, response) => {
 
 router.get('/getSearchResult', auth, async(request, response) => {
     let superUsers = await SuperUser.find({});
-    let geners = await Gener.find({});
     let songs = await Song.find({});
     let album = await Album.find({});
     superUsers = superUsers.map(x => x = {
@@ -900,12 +899,6 @@ router.get('/getSearchResult', auth, async(request, response) => {
         subscribes: x.subscribes,
         type: "artist"
     });
-    geners = geners.map(x => x = {
-        _id: x._id,
-        name: x.generName,
-        genereImage: x.genereImage,
-        type:'gener'
-    })
     songs = songs.map(x => x = {
         _id: mongoose.Schema.Types.ObjectId,
         name: x.trackName,
@@ -930,7 +923,7 @@ router.get('/getSearchResult', auth, async(request, response) => {
         tracks: x.tracks,
         type:'album'
     })
-    let allData = [].concat(superUsers,geners, songs, album);
+    let allData = [].concat(superUsers, songs, album);
     console.log("allData: " + JSON.stringify(allData));
     return response.status(200).json({
         allData: allData
