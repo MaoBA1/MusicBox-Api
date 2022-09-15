@@ -897,7 +897,7 @@ router.get('/getSearchResult', auth, async(request, response) => {
         album: x.album,
         singles: x.singles,
         playlists: x.playlists,
-        superUsers: x.superUsers,
+        subscribes: x.subscribes,
         type: "artist"
     });
     geners = geners.map(x => x = {
