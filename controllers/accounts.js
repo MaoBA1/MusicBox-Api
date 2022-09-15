@@ -903,7 +903,8 @@ router.get('/getSearchResult', auth, async(request, response) => {
     geners = geners.map(x => x = {
         _id: x._id,
         name: x.generName,
-        generImage: x.generImage
+        genereImage: x.genereImage,
+        type:'gener'
     })
     songs = songs.map(x => x = {
         _id: mongoose.Schema.Types.ObjectId,
