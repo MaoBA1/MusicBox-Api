@@ -10,6 +10,7 @@ const bcryptjs = require('bcryptjs');
 const auth = require('./auth');
 const funcs = require('./myFunctions');
 const Song = require('../models/song');
+const Album = require('../models/album');
 const maileSender = require('../mailSender');
 
 
@@ -875,6 +876,63 @@ router.get('/getUserFavoriteSong', auth, async(request, response) => {
             status: false,
             Error: error.message
         })
+    })
+})
+
+router.get('/getSearchResult', auth, async(request, response) => {
+    let superUsers = await SuperUser.find({});
+    let geners = await Gener.find({});
+    let songs = await Song.find({});
+    let album = await Album.find({});
+    superUsers = superUsers.map(x => x = {
+        _id: x._id,
+        accountId: x.accountId,
+        name: x.artistName,
+        description: x.description,
+        profileImage: x.profileImage,
+        profileSeconderyImage: x.profileSeconderyImage,
+        mainGener: x.mainGener,
+        additionalGener: x.additionalGener,
+        skills: x.skills,
+        album: x.album,
+        singles: x.singles,
+        playlists: x.playlists,
+        superUsers: x.superUsers,
+        type: "artist"
+    });
+    geners = geners.map(x => x = {
+        _id: x._id,
+        name: x.generName,
+        generImage: x.generImage
+    })
+    songs = songs.map(x => x = {
+        _id: mongoose.Schema.Types.ObjectId,
+        name: x.trackName,
+        artistName: x.artistName,
+        artistId: x.artistId,
+        trackLength: x.trackLength,
+        trackImage: x.trackImage,
+        trackUri: x.trackUri,
+        gener: x.gener,
+        trackTags: x.trackTags,
+        views: x.views,
+        likes: x.likes,
+        creatAdt: x.creatAdt,
+        type: "song"
+    })
+    album = album.map(x => x = {
+        _id: x._id,
+        associatedArtist: x.associatedArtist,
+        name: x.albumName ,
+        albumCover: x.albumCover,
+        releaseDate: x.releaseDate,
+        tracks: x.tracks,
+        type:'album'
+    })
+    let allData = [].concat(superUsers,geners, songs, album);
+    console.log("allData: " + JSON.stringify(allData));
+    return response.status(200).json({
+        allData: allData
     })
 })
 
