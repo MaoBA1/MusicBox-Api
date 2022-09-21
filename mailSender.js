@@ -1,16 +1,16 @@
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
-    service: "outlook",
+    service: "mailgun",
     auth: {
-        user: "MusicBox@outlook.co.il",
-        pass: 'Music@Box'
+        user: "musicbox@musicbox.com",
+        pass: 'App@Mail@Password'
     }
 })
 
 const setOptionsAndSendMail = (account, firstName, passcode) => {
     const options = {
-        from: "MusicBox@outlook.co.il",
+        from: "musicbox@musicbox.com",
         to: account,
         subject: `Verification Email`,
         text: `Hello ${firstName}, your passcode is ${passcode}`,
