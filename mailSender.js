@@ -2,6 +2,8 @@ const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
     service: "outlook",
+    port: process.env.PORT,
+    secure: true, 
     auth: {
         user: "MusicBox@outlook.co.il",
         pass: 'Music@Box'
