@@ -31,7 +31,7 @@ router.post('/creatNewSong', auth, async (request, response) => {
                         artistName: artist.artistName,
                         artistId: artist._id,
                         trackLength: trackLength,
-                        trackImage: trackImage,
+                        trackImage: trackImage || 'https://firebasestorage.googleapis.com/v0/b/musicboxapp-aad61.appspot.com/o/assets%2Ficon.png?alt=media&token=a1dbac52-a561-4db1-b0fd-e0ea4283ae5a',
                         trackUri: trackUri,
                         gener: gener,
                         trackTags: trackTags
