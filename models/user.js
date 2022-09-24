@@ -30,12 +30,12 @@ const userSchema = new Schema({
         {
             _id: mongoose.Schema.Types.ObjectId,
             playlistName: String,
-            playlistImage: {type:String, default:'https://res.cloudinary.com/musicbox/image/upload/v1659536896/default%20user%20profile%20picture/rcnaroocdqtzw3meps2m.png'},
+            playlistImage: {type:String, default:'https://firebasestorage.googleapis.com/v0/b/musicboxapp-aad61.appspot.com/o/assets%2Ficon.png?alt=media&token=a1dbac52-a561-4db1-b0fd-e0ea4283ae5a'},
             songs:[
                 { 
                     _id: mongoose.Schema.Types.ObjectId,
                     trackName: String,
-                    trackImage: {type: String, default: 'https://res.cloudinary.com/musicbox/image/upload/v1662455136/default%20user%20profile%20picture/tkab56xuyk7aq1j9l8lg.png'},
+                    trackImage: {type: String, default: 'https://firebasestorage.googleapis.com/v0/b/musicboxapp-aad61.appspot.com/o/assets%2Ficon.png?alt=media&token=a1dbac52-a561-4db1-b0fd-e0ea4283ae5a'},
                     trackUri: String,
                     trackLength: String,
                     artist:{

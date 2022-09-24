@@ -559,7 +559,7 @@ router.put('/createNewPlaylist', auth, async(request, response) => {
         const formattedPlaylist = {
             _id:mongoose.Types.ObjectId(),
             playlistName: playlist.playlistName,
-            playlistImage: playlist.playlistImage,
+            playlistImage: playlist.playlistImage || 'https://firebasestorage.googleapis.com/v0/b/musicboxapp-aad61.appspot.com/o/assets%2Ficon.png?alt=media&token=a1dbac52-a561-4db1-b0fd-e0ea4283ae5a',
             tracks: playlist.tracks
         }
         let playlists = artist.playlists;
@@ -651,16 +651,73 @@ router.get('/getArtistSubs/:artistId', auth, async(request, response) => {
 })
 
 
-// 
-//add skill
-// remove skill
-
-
-
-
-
-
-
+router.delete('/deleteSongByArtistChosen/:artistId/:songId', auth, async(request, response) => {
+    const artistId = request.params.artistId;
+    const songId = request.params.songId;
+    const {chosen} = request.body;
+    switch(chosen){
+        case 'singels':
+            await Song.findByIdAndDelete(songId);
+            await SuperUser.findById(artistId)
+            .then(async artist => {
+                artist.singles = artist.singles.filter(x => x._id.toString() !== songId.toString());
+                let artistPlaylist = artist.playlists;
+                artist.playlists.forEach(x=> { 
+                    x.tracks = x.tracks.filter(y => y._id.toString() !== songId.toString())
+                })
+                artist.playlists = artistPlaylist;
+                artist.save();
+                await Album.find({associatedArtist: artistId})
+                .then(albums => {
+                    albums = albums.forEach(x => {
+                        x.tracks = x.tracks.filter(y => y._id.toString() !== songId.toString());
+                        x.save();
+                    });
+                })
+                
+            }).catch(error => {
+                return response.status(500).json({
+                    status: false,
+                    Error: error
+                });
+            })
+        case 'album':
+            await Album.find({associatedArtist: artistId})
+            .then(albums => {
+                albums = albums.forEach(x => {
+                    x.tracks = x.tracks.filter(y => y._id.toString() !== songId.toString());                    
+                    x.save();
+                });                
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    status: false,
+                    Error: error
+                });
+            })
+        case 'playlist':
+           await SuperUser.findById(artistId)
+            .then(artist => {
+                let artistPlaylist = artist.playlists;
+                artist.playlists.forEach(x=> { 
+                    x.tracks = x.tracks.filter(y => y._id.toString() !== songId.toString())
+                })
+                artist.playlists = artistPlaylist;
+                artist.save();               
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    status: false,
+                    Error: error
+                });
+            })
+            
+    }
+    return response.status(200).json({
+        status: true,
+        message:'This song has been successfully deleted'
+    })
+})
 
 
 module.exports = router;

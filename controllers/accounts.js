@@ -555,7 +555,6 @@ router.put('/updateRegularAccount', auth, async(request, response) => {
 
 
 
-// router.put('/addSongToPlaylsit')
 router.put('/createNewPlaylist', auth, async(request, response) => {
     const accountId = request.account._id;
     User.findById(accountId)
@@ -565,7 +564,7 @@ router.put('/createNewPlaylist', auth, async(request, response) => {
             const newPlaylist = {
                 _id: mongoose.Types.ObjectId(),
                 playlistName: playlist.playlistName,
-                playlistImage: playlist.playlistImage,
+                playlistImage: playlist.playlistImage || 'https://firebasestorage.googleapis.com/v0/b/musicboxapp-aad61.appspot.com/o/assets%2Ficon.png?alt=media&token=a1dbac52-a561-4db1-b0fd-e0ea4283ae5a',
                 songs:[
                     {
                         _id: mongoose.Types.ObjectId(),
@@ -574,7 +573,7 @@ router.put('/createNewPlaylist', auth, async(request, response) => {
                         trackLength: playlist.song.trackLength,
                         artist: playlist.song.artist,
                         creatAdt: playlist.song.creatAdt,
-                        trackImage: playlist.song.trackImage
+                        trackImage: playlist.song.trackImage || 'https://firebasestorage.googleapis.com/v0/b/musicboxapp-aad61.appspot.com/o/assets%2Ficon.png?alt=media&token=a1dbac52-a561-4db1-b0fd-e0ea4283ae5a',
                     }
                 ]
             }
@@ -616,11 +615,8 @@ router.put('/addSongToUserPlaylist/:playlistId', auth, async(request, response) 
     .then(async account => {
         if(account) {
             const { playlistId } = request.params;
-            const { song } = request.body;            
+            const { song } = request.body;   
             let userPlaylists = account.playlists;
-            console.log('====================================');
-            console.log(userPlaylists, playlistId);
-            console.log('====================================');
             userPlaylists.forEach(playlist => {
                 if(playlist._id.toString() === playlistId.toString()){
                     console.log(playlist);
@@ -924,7 +920,6 @@ router.get('/getSearchResult', auth, async(request, response) => {
         type:'album'
     })
     let allData = [].concat(superUsers, songs, album);
-    console.log("allData: " + JSON.stringify(allData));
     return response.status(200).json({
         allData: allData
     })

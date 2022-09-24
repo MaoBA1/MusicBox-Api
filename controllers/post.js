@@ -273,4 +273,21 @@ router.get('/getAllArtistPosts/:artistId', auth, async(request, response) => {
     })
 } )
 
+router.delete('/deletePost/:postId', auth, async(request, response) =>{
+    const postId = request.params.postId;
+    await Post.findByIdAndDelete(postId)
+    .then(() => {
+        return response.status(200).json({
+            status:true,
+            message: 'This post has been successfully deleted'
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error
+        })
+    })
+})
+
 module.exports = router;
