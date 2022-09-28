@@ -14,10 +14,6 @@ const Album = require('../models/album');
 const maileSender = require('../mailSender');
 
 
-// const bodyParser = require('body-parser');
-// router.use(bodyParser.json());
-
-
 
 router.post('/creatAccount', async(request, response) => {    
     // Get User Input
@@ -922,6 +918,54 @@ router.get('/getSearchResult', auth, async(request, response) => {
     let allData = [].concat(superUsers, songs, album);
     return response.status(200).json({
         allData: allData
+    })
+})
+
+
+router.put('/deleteSongFromUserPlaylist/:playlistId/:songName', auth, async(request, response) => {
+    const playlistId = request.params.playlistId;
+    const songName = request.params.songName;
+    const accountId = request.account._id;
+    await User.findById(accountId)
+    .then(account => {
+        const accountPlaylist = account.playlists.filter(x=> x._id.toString() === playlistId.toString());
+        const playlist = accountPlaylist[0];
+        const index = account.playlists.indexOf(playlist);
+        account.playlists[index].songs = account.playlists[index].songs.filter(x => x.trackName.toString() !== songName.toString());
+        return account.save()
+        .then(account_updated => {
+            return response.status(200).json({
+                status: true,
+                Account: account_updated
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error
+        })
+    })
+})
+router.put('/deletUserPlaylist/:playlistId', auth, async(request, response) => {
+    const playlistId = request.params.playlistId;
+    const accountId = request.account._id;
+    await User.findById(accountId)
+    .then(account => {
+        account.playlists = account.playlists.filter(x => x._id.toString() !== playlistId.toString());
+        return account.save()
+        .then(account_updated => {
+            return response.status(200).json({
+                status: true,
+                Account: account_updated
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error
+        })
     })
 })
 
