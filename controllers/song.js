@@ -412,5 +412,21 @@ router.get('/getSongsByUserFavoritesGeners', auth, async(request, response) => {
 })
 
 
+router.get('/getAllSongs', auth, async(request, response) => {
+    await Song.find({})
+    .then((songs) => {
+        return response.status(200).json({
+            status: true,
+            Songs: songs
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error
+        })
+    })
+})
+
 
 module.exports = router;
