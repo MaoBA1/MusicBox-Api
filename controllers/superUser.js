@@ -661,20 +661,7 @@ router.delete('/deleteSongByArtistChosen/:artistId/:songId', auth, async(request
             await SuperUser.findById(artistId)
             .then(async artist => {
                 artist.singles = artist.singles.filter(x => x._id.toString() !== songId.toString());
-                let artistPlaylist = artist.playlists;
-                artist.playlists.forEach(x=> { 
-                    x.tracks = x.tracks.filter(y => y._id.toString() !== songId.toString())
-                })
-                artist.playlists = artistPlaylist;
                 artist.save();
-                await Album.find({associatedArtist: artistId})
-                .then(albums => {
-                    albums = albums.forEach(x => {
-                        x.tracks = x.tracks.filter(y => y._id.toString() !== songId.toString());
-                        x.save();
-                    });
-                })
-                
             }).catch(error => {
                 return response.status(500).json({
                     status: false,
@@ -686,7 +673,7 @@ router.delete('/deleteSongByArtistChosen/:artistId/:songId', auth, async(request
             .then(albums => {
                 albums = albums.forEach(x => {
                     x.tracks = x.tracks.filter(y => y._id.toString() !== songId.toString());                    
-                    x.save();
+                    return x.save();
                 });                
             })
             .catch(error => {
@@ -703,7 +690,7 @@ router.delete('/deleteSongByArtistChosen/:artistId/:songId', auth, async(request
                     x.tracks = x.tracks.filter(y => y._id.toString() !== songId.toString())
                 })
                 artist.playlists = artistPlaylist;
-                artist.save();               
+               return artist.save();               
             })
             .catch(error => {
                 return response.status(500).json({
@@ -711,11 +698,110 @@ router.delete('/deleteSongByArtistChosen/:artistId/:songId', auth, async(request
                     Error: error
                 });
             })
+        
             
     }
     return response.status(200).json({
         status: true,
         message:'This song has been successfully deleted'
+    })
+})
+
+
+router.delete('/deleteArtistAlbum/:artistId/:albumId', auth, async(request, response) => {
+    const artistId = request.params.artistId;
+    const albumId = request.params.albumId;
+    await SuperUser.findById(artistId)
+    .then(async artist => {
+        artist.albums = artist.albums.filter(x => x._id.toString() !== albumId.toString());
+        await Album.findByIdAndDelete(albumId)
+        .then(() => {
+            return artist.save()
+            .then(() => {
+                return response.status(200).json({
+                    status: true,
+                    message: 'This Album has been successfully deleted'
+                })
+            })
+        })
+        .catch(error => {
+            return response.status(500).json({
+                status: false,
+                Error: error
+            })
+        }) 
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error
+        })
+    })
+})
+
+router.delete('/deleteArtistPlaylist/:artistId/:playlistId', auth, async(request, response) => {
+    const artistId = request.params.artistId;
+    const playlistId = request.params.playlistId;
+    await SuperUser.findById(artistId)
+    .then(artist => {
+        artist.playlists = artist.playlists.filter(x => x._id.toString() !== playlistId.toString());
+        return artist.save()
+        .then(() => {
+            return response.status(200).json({
+                status: true,
+                message:'This playlist has been successfully deleted'
+            })
+        })
+    })
+})
+
+router.put('/addAdditionalSongsToArtistPlaylist/:artistId/:playlistId', auth, async(request, response) => {
+    const artistId = request.params.artistId;
+    const playlistId = request.params.playlistId;
+    await SuperUser.findById(artistId)
+    .then(artist => {
+        const { songs } = request.body;
+        const artistPlaylist = artist.playlists.filter(x=> x._id.toString() === playlistId.toString());
+        const playlist = artistPlaylist[0];
+        const index = artist.playlists.indexOf(playlist);
+        artist.playlists[index].tracks = artist.playlists[index].tracks.concat(songs); 
+        return artist.save()
+        .then(updated_artist => {
+            return response.status(200).json({
+                status: true,
+                Artist: updated_artist
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error
+        })
+    });
+})
+
+
+router.put('/addAdditionalSongsToArtistAlbum/:artistId/:albumId', auth, async(request, response) => {
+    const artistId = request.params.artistId;
+    const albumId = request.params.albumId;
+    await Album.findById(albumId)
+    .then(album => {
+        const { songs } = request.body;
+        album.tracks = album.tracks.concat(songs);
+        return album.save()
+        .then(album_updated => {
+            return response.status(200).json({
+                status: true,
+                Album: album_updated
+            })
+        })
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error
+        })
     })
 })
 
