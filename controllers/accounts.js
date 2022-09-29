@@ -611,12 +611,21 @@ router.put('/addSongToUserPlaylist/:playlistId', auth, async(request, response) 
     .then(async account => {
         if(account) {
             const { playlistId } = request.params;
-            const { song } = request.body;   
+            const { song } = request.body; 
+            const newSong =  {
+                _id: mongoose.Types.ObjectId(),
+                artist: song.artist,
+                creatAdt: song.creatAdt,
+                trackImage: song.trackImage,
+                trackLength: song.trackLength,
+                trackName: song.trackName,
+                trackUri: song.trackUri,
+            } 
             let userPlaylists = account.playlists;
             userPlaylists.forEach(playlist => {
                 if(playlist._id.toString() === playlistId.toString()){
                     console.log(playlist);
-                    playlist.songs.push(song)       
+                    playlist.songs.push(newSong)       
                 }
             })
             account.playlists = userPlaylists;
@@ -781,7 +790,7 @@ router.put('/likeToSong/:songId', auth, async(request, response) => {
                     trackImage: song.trackImage,
                     trackUri: song.trackUri,
                     trackLength: song.trackLength,
-                    artist: song.artist,
+                    artist: {artistId:song.artistId, artistName: song.artistName},
                     creatAdt: song.creatAdt,
                 })
             } else {
