@@ -16,7 +16,7 @@ const userSchema = new Schema({
     isLocked: {type: Boolean, default: false},
     isSuperUser:{type: Boolean, default: false},
     isItFirstUse:{type: Boolean, default: true}, 
-    Avatar: {type: String, default: 'https://res.cloudinary.com/musicbox/image/upload/v1659536896/default%20user%20profile%20picture/rcnaroocdqtzw3meps2m.png'},
+    Avatar: {type: String, default: 'https://firebasestorage.googleapis.com/v0/b/musicboxapp-aad61.appspot.com/o/assets%2Ficon.png?alt=media&token=a1dbac52-a561-4db1-b0fd-e0ea4283ae5a'},
     favoritesGeners:[
          {type: mongoose.Schema.Types.ObjectId, ref: 'Gener'},
         

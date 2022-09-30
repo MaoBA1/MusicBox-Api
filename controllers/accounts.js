@@ -866,7 +866,7 @@ router.get('/getUserFavoriteSong', auth, async(request, response) => {
     const accountId = request.account._id;
     await User.findById(accountId)
     .then(account => {
-        let songsThatYouLiked = account.playlists.filter(x => x.playlistName === "Songs That You Liked");
+        let songsThatYouLiked = account.playlists.filter(x => x.playlistName === "Songs That You Liked")[0];
         return response.status(200).json({
             status: true,
             Playlist: songsThatYouLiked
