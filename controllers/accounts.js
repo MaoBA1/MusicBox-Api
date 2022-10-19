@@ -58,7 +58,7 @@ router.post('/creatAccount', async(request, response) => {
                 dob: new Date(dob),
                 passcode: passcode
             }            
-            maileSender.setOptionsAndSendMail(email, firstName, passcode);
+            // maileSender.setOptionsAndSendMail(email, firstName, passcode);
             return response.status(200).json({
                 status: true,
                 account: _user
