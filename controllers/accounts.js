@@ -37,8 +37,7 @@ router.post('/creatAccount', async(request, response) => {
                 message: `There is already user with ${lowercaseEmail}`
             })
         } else {
-            // We start make new record for this new user 
-
+            // We start make new record for this new user
             // Encrypt Password
             // We make encrypt password with the user input password
             // and offset 10 and we will save the encrypt password in the db
@@ -47,7 +46,9 @@ router.post('/creatAccount', async(request, response) => {
             // we generate verification passcode for the user
             const passcode = generateRandomIntegerInRange(1000,9999); 
             console.log(passcode);           
-            // Creat user in Mongodb            
+            // Creat user in Mongodb 
+            // and we ain't save him until we will verify him
+            // for just now we return the user object to the front           
             const _user = {
                 _id: mongoose.Types.ObjectId(),
                 email: lowercaseEmail,
@@ -58,7 +59,7 @@ router.post('/creatAccount', async(request, response) => {
                 dob: new Date(dob),
                 passcode: passcode
             }            
-            // maileSender.setOptionsAndSendMail(email, firstName, passcode);
+            maileSender.setOptionsAndSendMail(email, firstName, passcode);
             return response.status(200).json({
                 status: true,
                 account: _user
@@ -73,6 +74,13 @@ router.post('/creatAccount', async(request, response) => {
         });
     })
 });
+
+
+
+
+// This post request uses to verify user in two cases:
+// 1. when he create new account
+// 2. when the user want to reset is password
 
 router.post('/verify', async(request, response) => {
     // Get User Input
@@ -90,14 +98,16 @@ router.post('/verify', async(request, response) => {
     User.findOne({email : email})
     .then(async account => {
         if(account) {
+            // in this case the account is exist and the user want to reset is password
             console.log(account.passcode);
             if(account.passcode == inputted_passcode) {
-                console.log('test');
                 // if passcode match we update isApproved property to true
                 account.isApproved = true;
                 return account.save()
                 .then(account_updated => {
                     return response.status(200).json({
+                        // in this case the server reurn ok that the user is verifyed and now he can change his password
+                        // also return the all user details to the front
                         statusForgetPassword: true,
                         user: account_updated
                     })
@@ -110,10 +120,11 @@ router.post('/verify', async(request, response) => {
             }
 
         }
-        // if there is no user with the inputed email we cant verify him and we return message about that
-         else {
-             
+        // if there is no account with the inputted email
+        // this mean that the user want to create new account 
+         else {             
             if(inputted_passcode == passcode.toString()){
+                // if the user inputted the correct passcode we can create for him account with all his details
                 const _user = new User({
                     _id: mongoose.Types.ObjectId(),
                     email: email,
@@ -126,6 +137,7 @@ router.post('/verify', async(request, response) => {
                     isApproved: true
                 })
                 console.log(_user);
+                // we save the record and return it to the front
                 return _user.save()
                 .then(new_user => {
                     return response.status(200).json({
@@ -154,6 +166,9 @@ router.post('/verify', async(request, response) => {
         })
     })
 })
+
+
+
 
 router.post('/login', async(request, response) => {
    // Get User Input
@@ -210,13 +225,14 @@ router.post('/login', async(request, response) => {
    })
 })
 
-//?
+
 router.post('/forgetPassword', async(request, response) => {
     // Get User Input
     const email = request.body.email
     User.findOne({email: email})
     .then(async account => {
         if(account){
+            // if we found account with the inputted email
             // We generate new passcode for the user and update in the user record
             const newPasscode = generateRandomIntegerInRange(1000, 9999);
             maileSender.setOptionsAndSendMail(email, account.firstName, newPasscode);
@@ -250,6 +266,8 @@ router.post('/updatePassword', async(request, response) => {
     User.findOne({email : email})
     .then(async account => {
         if(account){
+            //we need to encrypt the new password
+            // and update the record with the new encrypted password
             const newFormattedPassword = await bcryptjs.hash(password, 10);
             account.password = newFormattedPassword;
             account.save()
