@@ -291,26 +291,32 @@ router.post('/updatePassword', async(request, response) => {
     })
 })
 
+// This Get Request return object with all the details of the current user
+// that just use the app
 router.get('/getUserData', auth, async(request, response) => {
-    const userId = request.account._id
-    
-    if(request.account.isSuperUser){   
+    const userId = request.account._id    
+    if(request.account.isSuperUser){  
+        // if the user is an artist we return as a response 
+        // the account and all the details about his artist profile 
         const superUser = await SuperUser.findOne({accountId : userId}).populate('accountId')
         return response.status(200).json({
             account: request.account,
             superAccount : superUser
         })
     } else {
+        // else if he is not artist we just return object with the user details
         return response.status(200).json({
             account: request.account
         })
     }
 })
 
-
-router.put('/addGenerToFavorite/:generId', auth, async(request, response) => {
+// in the first use of the user in the app we ask for him to tell us 
+// wich type of music geners he like 
+router.put('/addGenerToFavorite/:generId', auth, async(request, response) => {    
     const accountId = request.account._id;
     const generId = request.params.generId;        
+    // in this request we get from the front gener that the user picked
     await User.findById(accountId)
     .then(async user => {
         if(user) {
@@ -319,6 +325,8 @@ router.put('/addGenerToFavorite/:generId', auth, async(request, response) => {
                 if(gener) {
                     user.favoritesGeners.push(gener._id)
                     user.isItFirstUse=false
+                    // We add to the user favorite geners the gener that he picked
+                    // and we change the atribute `isItFirstUse` to true
                     return user.save()
                     .then(user_updated => {
                         return response.status(200).json({
@@ -361,6 +369,52 @@ router.put('/addGenerToFavorite/:generId', auth, async(request, response) => {
     })
 })
 
+// This request uses to remove gener from user favorite geners list 
+router.put('/removeGenerFromFavorites/:generId', auth, async(request, response) => {
+    const generId = request.params.generId;
+    const accountId = request.account._id;
+    User.findById(accountId)
+    .then(async user => {
+        if(user) { 
+            // We filter the picked gener from the user favorite geners list
+            let favoritesGeners = user.favoritesGeners.filter(x => x != generId);                   
+            user.favoritesGeners = favoritesGeners
+            if(user.favoritesGeners.length == 0) {
+                // if affter we filter the list it is empty 
+                // we change the `isItFirstUse` atribute to true
+                // (This case can only happen if the user was asked in the first use what genres he likes and the user regretted it)
+                user.isItFirstUse=true
+            }
+            return user.save()
+            .then(user_updated => {
+                return response.status(200).json({
+                    status: true,
+                    User: user_updated
+                })
+            })
+            .catch(error => {
+                return response.status(500).json({
+                    status: false,
+                    Error: error
+                })
+            })
+        } else {
+            return response.status(403).json({
+                status: false,
+                message: 'User Not found'
+            })
+        }
+        
+    })
+    .catch(error => {
+        return response.status(500).json({
+            status: false,
+            Error: error
+        })
+    })
+})
+
+
 router.put('/addSubscribe/:artistId', auth , async(request, response) => {
     const accountid = request.account._id;
     const artistId = request.params.artistId;
@@ -392,45 +446,7 @@ router.put('/addSubscribe/:artistId', auth , async(request, response) => {
     })
 })
 
-router.put('/removeGenerFromFavorites/:generId', auth, async(request, response) => {
-    const generId = request.params.generId;
-    const accountId = request.account._id;
-    User.findById(accountId)
-    .then(async user => {
-        if(user) { 
-            let favoritesGeners = user.favoritesGeners.filter(x => x != generId);                   
-            user.favoritesGeners = favoritesGeners
-            if(user.favoritesGeners.length == 0) {
-                user.isItFirstUse=true
-            }
-            return user.save()
-            .then(user_updated => {
-                return response.status(200).json({
-                    status: true,
-                    User: user_updated
-                })
-            })
-            .catch(error => {
-                return response.status(500).json({
-                    status: false,
-                    Error: error
-                })
-            })
-        } else {
-            return response.status(403).json({
-                status: false,
-                message: 'User Not found'
-            })
-        }
-        
-    })
-    .catch(error => {
-        return response.status(500).json({
-            status: false,
-            Error: error
-        })
-    })
-})
+
 
 router.put('/removeSubscribe/:artistId', auth, async(request, response) => {
     const artistId = request.params.artistId;
