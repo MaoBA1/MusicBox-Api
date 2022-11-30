@@ -414,13 +414,16 @@ router.put('/removeGenerFromFavorites/:generId', auth, async(request, response) 
     })
 })
 
-
+// The request uses to add artist to the user favorites artists
 router.put('/addSubscribe/:artistId', auth , async(request, response) => {
+    // The account id of the user
     const accountid = request.account._id;
+    // The account id of the favorite artist
     const artistId = request.params.artistId;
     await User.findById(accountid)
     .then(user => {
         if(user) {
+            // We push the account id of the artist into the user subscribes list
             user.subscribes.push(artistId)
             return user.save()
             .then(user_updated => {
@@ -447,13 +450,17 @@ router.put('/addSubscribe/:artistId', auth , async(request, response) => {
 })
 
 
-
+// The request uses to remove artist from the user favorites artists
 router.put('/removeSubscribe/:artistId', auth, async(request, response) => {
-    const artistId = request.params.artistId;
+    // The account id of the user
     const accountId = request.account._id;
+    // The account id of the favorite artist
+    const artistId = request.params.artistId;
     User.findById(accountId)
     .then(async user => {
         if(user) { 
+            // We filter from the user subscribes the account id of the artist
+            // and we save the changes in mongodb
             let subscribes = user.subscribes.filter(x => x != artistId);                   
             user.subscribes = subscribes
             return user.save()
@@ -482,13 +489,15 @@ router.put('/removeSubscribe/:artistId', auth, async(request, response) => {
 })
 
 
-
+// The request uses to remove playlist from the user playlists
 router.put('/removePlaylist/:playlistId', auth, async(request, response) => {
     const accountId = request.account._id;
     User.findById(accountId)
     .then(async user => {
         if(user) {
+            // The playlist id
             const playlistId = request.params.playlistId;
+            // The user playlists after filter the specific playlist from it
             const userPlaylists = user.playlists.filter(playlist => playlist._id != playlistId);
             user.playlists = userPlaylists;
             return user.save()
@@ -510,6 +519,7 @@ router.put('/removePlaylist/:playlistId', auth, async(request, response) => {
     })
 })
 
+// This request uses to get all the accounts that use the app
 router.get('/getAllAcounts', async(request, response) => {
     await User.find({})
     .then(Accounts => {
@@ -519,6 +529,8 @@ router.get('/getAllAcounts', async(request, response) => {
     })
 })
 
+
+// This request uses to get object with details of specific account
 router.get('/getaccountById/:accountId', async(request, response) => {
     const accountId = request.params.accountId;
     console.log(accountId);
@@ -533,8 +545,6 @@ router.get('/getaccountById/:accountId', async(request, response) => {
             Error: error.message
         })
     })
-        
-    
 })
 
 
