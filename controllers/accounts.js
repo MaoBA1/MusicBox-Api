@@ -547,9 +547,11 @@ router.get('/getaccountById/:accountId', async(request, response) => {
     })
 })
 
-
+// This request uses to update details of regular user account(not artist)
 router.put('/updateRegularAccount', auth, async(request, response) => {
+    // Account id of the current user 
     const accountId = request.account._id;
+    // All details from body request
     const {
       firstName,
       lastName,
@@ -560,6 +562,8 @@ router.put('/updateRegularAccount', auth, async(request, response) => {
     await User.findById(accountId)
     .then(account => {
         if(account) {
+            // We update all the atribute that we get from the user in the account object
+            // and than we save the record
             account.firstName = firstName;
             account.lastName = lastName;
             account.Avatar = Avatar;
@@ -594,16 +598,23 @@ router.put('/updateRegularAccount', auth, async(request, response) => {
 })
 
 
-
+// This request uses to create new playlist 
 router.put('/createNewPlaylist', auth, async(request, response) => {
+    // The account id of the current user
     const accountId = request.account._id;
     User.findById(accountId)
     .then(account => {
         if(account) {
+            // We get from the body request playlist object
             const { playlist } = request.body;
+            // We create new playlist object 
+            // with all the atribute of the playlist that we got from the user
             const newPlaylist = {
                 _id: mongoose.Types.ObjectId(),
                 playlistName: playlist.playlistName,
+                // in case the user didn't pick picture for his new playlist
+                // as a default the playlist picture will be the logo of musicbox
+                // as well the picture of the song that the playlist contain
                 playlistImage: playlist.playlistImage || 'https://firebasestorage.googleapis.com/v0/b/musicboxapp-aad61.appspot.com/o/assets%2Ficon.png?alt=media&token=a1dbac52-a561-4db1-b0fd-e0ea4283ae5a',
                 songs:[
                     {
@@ -617,6 +628,8 @@ router.put('/createNewPlaylist', auth, async(request, response) => {
                     }
                 ]
             }
+            // after we create this new playlist object we add it into the playlists list of the account
+            // and than we save the record
             let userPlaylists = account.playlists;
             userPlaylists.push(newPlaylist);
             account.playlists = userPlaylists;
