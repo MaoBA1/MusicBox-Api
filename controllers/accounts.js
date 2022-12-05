@@ -661,14 +661,18 @@ router.put('/createNewPlaylist', auth, async(request, response) => {
     })
 })
 
-
+// This request uses to add new song to user chosen playlist
 router.put('/addSongToUserPlaylist/:playlistId', auth, async(request, response) => {
+    // The account id of the current user 
     const accountId = request.account._id;
     User.findById(accountId)
     .then(async account => {
         if(account) {
+            // as a prameter we get playlist id that we need to add the song to it
             const { playlistId } = request.params;
+            // we get song object from the body request
             const { song } = request.body; 
+            // we create new song object with all the details of the song that we got
             const newSong =  {
                 _id: mongoose.Types.ObjectId(),
                 artist: song.artist,
@@ -679,6 +683,8 @@ router.put('/addSongToUserPlaylist/:playlistId', auth, async(request, response) 
                 trackUri: song.trackUri,
             } 
             let userPlaylists = account.playlists;
+            // we sort all current user playlists list and look for the playlist with the same id that we got
+            // than we add the new song to it and save the record
             userPlaylists.forEach(playlist => {
                 if(playlist._id.toString() === playlistId.toString()){
                     console.log(playlist);
@@ -714,9 +720,8 @@ router.put('/addSongToUserPlaylist/:playlistId', auth, async(request, response) 
     })
 })
 
-
+// This request uses to get all the current user playlists
 router.get('/getAllUserPlaylists', auth, async (request, response) => {
-    console.log('test');
     const accountId = request.account._id;
     User.findById(accountId)
     .then(account => {
@@ -740,17 +745,24 @@ router.get('/getAllUserPlaylists', auth, async (request, response) => {
     })
 })
 
+// This request uses to get all the current user favorites artists
 router.get('/getAllUserSubScribes', auth, async (request, response) => {
     const accountId = request.account._id;
     await User.findById(accountId)
     .then(async account => {
         await SuperUser.find({})
         .then(async allArtists => {
+            // all the user favorites artists id
             let accountSubs = account.subscribes;
+            // here we will hold the whole object of each artist that show in the list of the user favorites artist
             let artists = []
+            // we sort all the artist and those that their id appear in the user favorites artists list will be added into "artists"
             accountSubs.forEach(async x => {
                 let artist = allArtists.filter(y => y._id.toString() === x._id.toString());
-                artist = artist[0];
+                // affter we use filter method we get an array 
+                // in this case with 1 object in it 
+                // so we take only the object from the array
+                artist = artist[0];                
                 artists.push(artist);
             })
             
@@ -769,19 +781,25 @@ router.get('/getAllUserSubScribes', auth, async (request, response) => {
     })
 })
 
+// This request use to add artist to the user favorites artists list
 router.put('/subscribeToArtistPage/:artistId', auth, async (request, response) => {
+    // account id of the current user 
     const accountId = request.account._id;
+    // artist id of the chosen artist
     const artistId = request.params.artistId;
     await User.findById(accountId)
     .then(async account => {
         let accountSubs = account.subscribes;
+        // we add the artist id into the user favorites artists list
         accountSubs.push({_id: artistId});
         await SuperUser.findById(artistId)
         .then(artist => {
             let artistSubs = artist.subscribes;
+            // we add the user account id into the artist subscribers list
             artistSubs.push({_id: accountId})
             account.subscribes = accountSubs;
             artist.subscribes = artistSubs;
+            // than we save the changes of the recordes
             artist.save();
             return account.save()
             .then(account_updated => {
@@ -800,12 +818,17 @@ router.put('/subscribeToArtistPage/:artistId', auth, async (request, response) =
     })
 })
 
+// This request uses to remove artist from usr favorites artists list
 router.put('/unsubscribeFromArtistPage/:artistId', auth, async(request, response) => {
+    // account id of the current user 
     const accountId = request.account._id;
+    // artist id of the chosen artist
     const artistId = request.params.artistId;
     await User.findById(accountId)
     .then(async account => {
         let accountSubs = account.subscribes;
+        // we filter the artist id from the account favorites artistslist 
+        // as well we filter the user account id from the artist subscribers list
         accountSubs = accountSubs.filter(x => x._id.toString() !== artistId.toString());
         await SuperUser.findById(artistId)
         .then(artist => {
@@ -831,16 +854,23 @@ router.put('/unsubscribeFromArtistPage/:artistId', auth, async(request, response
     })
 })
 
+// This request uses to give like from the current user to some song
 router.put('/likeToSong/:songId', auth, async(request, response) => {
+    // account id of the current user
     const accountId = request.account._id;
+    // liked song id
     const songId = request.params.songId;
     await User.findById(accountId)
     .then(async account => {
+        // we look for the song with the same song id
         await Song.findById(songId)
         .then(async song => {
             let accountPlaylist = account.playlists;
-            let liskelist = account.playlists.filter(x => x.playlistName === "Songs That You Liked")
-            if(liskelist.length > 0) {
+            // we check if the user already gave like to some song
+            // if he is so he have playlist that cold "song that you liked"
+            // else we need to create playlist in this name and add the liked song into it
+            let likeList = account.playlists.filter(x => x.playlistName === "Songs That You Liked")
+            if(likeList.length > 0) {
                 accountPlaylist[0].songs.unshift({
                     _id: songId,
                     trackName: song.trackName,
@@ -851,6 +881,8 @@ router.put('/likeToSong/:songId', auth, async(request, response) => {
                     creatAdt: song.creatAdt,
                 })
             } else {
+                // we create playlist for the favorites user songs
+                // and we add to it the liked song and add this list to the user playlists
                 accountPlaylist.unshift({
                     _id: mongoose.Types.ObjectId(),
                     playlistName:"Songs That You Liked",
@@ -868,6 +900,8 @@ router.put('/likeToSong/:songId', auth, async(request, response) => {
                     ]
                 })
             }
+            // we add to the song likes attribute the account id of the current user
+            // and than we save all the changes that done
             song.likes.push({_id: accountId});
             song.save();
             account.playlist = accountPlaylist;
@@ -889,6 +923,7 @@ router.put('/likeToSong/:songId', auth, async(request, response) => {
     })
 })
 
+// This request uses to unlike song and put it out from the user favorites song list
 router.put('/unlikeToSong/:songId', auth, async(request, response) => {
     const accountId = request.account._id;
     const songId = request.params.songId;
