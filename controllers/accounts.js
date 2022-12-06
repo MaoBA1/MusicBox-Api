@@ -1044,14 +1044,20 @@ router.get('/getSearchResult', auth, async(request, response) => {
 
 
 router.put('/deleteSongFromUserPlaylist/:playlistId/:songName', auth, async(request, response) => {
+    // playlist id that we want remove song from 
     const playlistId = request.params.playlistId;
+    // name of the song that we want to remove
     const songName = request.params.songName;
+    // account id of the current user
     const accountId = request.account._id;
     await User.findById(accountId)
     .then(account => {
-        const accountPlaylist = account.playlists.filter(x=> x._id.toString() === playlistId.toString());
+        // we need to find this playlist from the user playlists with the same id that we got
+        const accountPlaylist = account.playlists.filter(x=> x._id.toString() === playlistId.toString());        
         const playlist = accountPlaylist[0];
+        // we need to find the index that this playlist find in
         const index = account.playlists.indexOf(playlist);
+        // from this playlist we remove the song with the smae name and than we save the changes
         account.playlists[index].songs = account.playlists[index].songs.filter(x => x.trackName.toString() !== songName.toString());
         return account.save()
         .then(account_updated => {
@@ -1068,6 +1074,8 @@ router.put('/deleteSongFromUserPlaylist/:playlistId/:songName', auth, async(requ
         })
     })
 })
+
+// This request uses to remove playlist from the user playlists
 router.put('/deletUserPlaylist/:playlistId', auth, async(request, response) => {
     const playlistId = request.params.playlistId;
     const accountId = request.account._id;
