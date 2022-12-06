@@ -6,17 +6,22 @@ const Post = require('../models/post');
 const SuperUser = require('../models/superUser');
 const auth = require('./auth');
 
-
+// This request uses to upload new post from current uder (artist) account
 router.post('/uploadNewPost', auth, async(request, response) => {
+    // account id
     const accountId = request.account._id;
+    // we get from the body of the request all the details of the post
     const {
         postContent,
         uri,
         format
     } = request.body;
+    // We look for artist with the same account id
     await SuperUser.findOne({accountId: accountId})
     .then(artist => {
         if(artist) {
+            // we create new post record
+            // and save the record
              const _post = new Post({
                 _id: mongoose.Types.ObjectId(),
                 postAuthorId: artist._id,
@@ -55,6 +60,8 @@ router.post('/uploadNewPost', auth, async(request, response) => {
     }) 
 })
 
+
+// This request uses to get all the post that ever posted in the app
 router.get('/getAllPosts', auth, async(request, response) => {
     await Post.find({})
     .then(posts => {
@@ -72,15 +79,22 @@ router.get('/getAllPosts', auth, async(request, response) => {
     
 });
 
+
+// This request uses to give like to post
 router.put('/likePost/:postId', auth, async(request, response) => {
+    // account id of the current user 
     const accountId = request.account._id;
+    // post id
     const postId = request.params.postId;
     await User.findById(accountId)
     .then(async account => {
         if(account) {
+            // we look for post with the same post id
             await Post.findById(postId)
             .then(async post => {
                 if(post) {
+                    // we add the account id to the post likes array 
+                    // and save the record
                     const likeArray = post.likes;                    
                     likeArray.push(accountId);
                     post.likes = likeArray;
@@ -114,16 +128,21 @@ router.put('/likePost/:postId', auth, async(request, response) => {
     })
 })
 
-
+// This post uses to unlike post
 router.put('/unlikePost/:postId', auth, async(request, response) => {
+    // account id of the current user
     const accountId = request.account._id;
+    // post id
     const postId = request.params.postId;
     await User.findById(accountId)
     .then(async account => {
         if(account) {
+            // we look for post with the same post id
             await Post.findById(postId)
             .then(async post => {
                 if(post) {
+                    // we filter this account id from the post likes 
+                    // and save the record
                     let likeArray = post.likes.filter(like => like.toString() != accountId.toString());
                     post.likes = likeArray;
                     return post.save()
@@ -161,6 +180,7 @@ router.put('/unlikePost/:postId', auth, async(request, response) => {
     })
 })
 
+// This request uses to get post by id
 router.get('/getPostById/:postId', auth, async(request, response) => {
     const postId = request.params.postId;
     await Post.findById(postId)
@@ -176,6 +196,8 @@ router.get('/getPostById/:postId', auth, async(request, response) => {
     })
 })
 
+
+// This request uses to get all the comment of some post by post id
 router.get('/getPostComments/:postId', auth, async(request, response) => {
     const postId = request.params.postId;
     await Post.findById(postId)
@@ -194,18 +216,24 @@ router.get('/getPostComments/:postId', auth, async(request, response) => {
     })
 })
 
+// This request uses to add comment to post comments
 router.put('/sendComment/:postId', auth, async(request, response) => {
+    // account id of the current user
     const accountId = request.account._id;
     console.log(accountId);
     await User.findById(accountId)
     .then(async account => {
         if(account) {
+            // post id
             const postId = request.params.postId;
+            // we look for post with the same post id
             await Post.findById(postId)
             .then(async post => {
                 if(post) {
-                    const {comment} = request.body;
+                    // we get commet from the body of the request
+                    const { comment } = request.body;
                     let commentArray = post.comments;
+                    // we add the comment with all the required details to the comments array of the post
                     commentArray.push({
                         accountFirstName: account.firstName,
                         accountLastName: account.lastName,
@@ -214,6 +242,7 @@ router.put('/sendComment/:postId', auth, async(request, response) => {
                         comment: comment,
                     })
                     post.comments = commentArray;
+                    // we save the record
                     return post.save()
                     .then(post_updated => {
                         return response.status(200).json({
@@ -255,9 +284,12 @@ router.put('/sendComment/:postId', auth, async(request, response) => {
     })
 })
 
-
+// This request uses to get all the post of some artist by his artist id
 router.get('/getAllArtistPosts/:artistId', auth, async(request, response) => {
+    // artist id
     const artistId = request.params.artistId;
+    // we looke for all the post with the same post author id like the artist id that we got
+    // from the body of the request
     await Post.find({postAuthorId: artistId})
     .then(posts => {
         return response.status(200).json({
@@ -273,6 +305,7 @@ router.get('/getAllArtistPosts/:artistId', auth, async(request, response) => {
     })
 } )
 
+// This post uses to delete post by id
 router.delete('/deletePost/:postId', auth, async(request, response) =>{
     const postId = request.params.postId;
     await Post.findByIdAndDelete(postId)
