@@ -73,11 +73,11 @@ const reorderSubscribes = async(mongoList, listToAdd) => {
 }
 
 
-module.exports = {
-    getGener,
-    getAdditionalGener,
-    reorderFavoriteGeners,
-    getSub,
-    getSubScribes,
-    reorderSubscribes,   
-}
+// module.exports = {
+//     getGener,
+//     getAdditionalGener,
+//     reorderFavoriteGeners,
+//     getSub,
+//     getSubScribes,
+//     reorderSubscribes,   
+// }
