@@ -925,17 +925,27 @@ router.put('/likeToSong/:songId', auth, async(request, response) => {
 
 // This request uses to unlike song and put it out from the user favorites song list
 router.put('/unlikeToSong/:songId', auth, async(request, response) => {
+    // account id of the current user
     const accountId = request.account._id;
+    // song id 
     const songId = request.params.songId;
     await User.findById(accountId)
     .then(async account => {
         await Song.findById(songId)
         .then(async song => {
+            // after we found the song with the same songId 
+            // we need to filter the account id of the user from his likes list 
             song.likes = song.likes.filter(x => x._id.toString() !== accountId.toString());
+            // we need to filtter the song id from the playlist that found in index 0 
+            // because this is the index of the playlist "song that you liked"
             account.playlists[0].songs = account.playlists[0].songs.filter(x => x._id.toString() !== songId.toString());
             if(account.playlists[0].songs.length === 0) {
+                // if after we filtered song from this list the length of the list is equal to 0
+                // we don't need this list until the user will like some another song 
+                // so we remove this list from the playlists list
                 account.playlists = account.playlists.slice(1, account.playlists.length);
             }
+            // finally we save the changes
             song.save();
             return account.save()
             .then(account_updated => {
@@ -954,6 +964,8 @@ router.put('/unlikeToSong/:songId', auth, async(request, response) => {
     })
 })
 
+
+// This requset uses to get the playlist "song that you liked" of the current user
 router.get('/getUserFavoriteSong', auth, async(request, response) => {
     const accountId = request.account._id;
     await User.findById(accountId)
@@ -972,6 +984,14 @@ router.get('/getUserFavoriteSong', auth, async(request, response) => {
     })
 })
 
+
+// This request is read among the first requests when a user logs in to his account to provide him with search results
+// These search results are divided into three categories:
+// Artists
+// songs
+// albums
+// To all the results included in the three categories we add an attribute called type
+// Finally we connect everything to one big set of results
 router.get('/getSearchResult', auth, async(request, response) => {
     let superUsers = await SuperUser.find({});
     let songs = await Song.find({});
@@ -1067,13 +1087,6 @@ router.put('/deletUserPlaylist/:playlistId', auth, async(request, response) => {
             status: false,
             Error: error
         })
-    })
-})
-
-// test
-router.get('/sayHello', (request, response) => {
-    response.status(200).json({
-        message: 'Hello people!'
     })
 })
 
