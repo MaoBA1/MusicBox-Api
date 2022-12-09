@@ -1,8 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
-const bycryptjs = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const SuperUser = require('../models/superUser');
 const Gener = require('../models/gener');
@@ -11,21 +9,26 @@ const Album = require('../models/album');
 const auth = require('./auth');
 
 
-
-const funcs = require('./myFunctions')
-
+// This request uses to create an artist account
 router.post('/creatSuperUser', auth, async(request, response) =>{
+    // account id of the current user
     const accountId = request.account._id;
     console.log(request.body);
+    // we are looking for artist account with the same account id
     SuperUser.findOne({accountId: accountId})
     .then(async artist => {
         if(artist) {
+            // if there is artist proifle ot this account we can't create for him another one
+            // and we response back withe message about this
             return response.status(200).json({
                 message: `Your account is already recognize as Artist`
             });
         } else {
+            // else we can create new artist profile
             const _user = await User.findById(accountId);
+            // now we need to change the "isSuperUser" attribute to true
             _user.isSuperUser = true;
+            // This is all the details for new artist proifle that we got from the body of the request
             const {
                 artistName,
                 description, 
@@ -37,13 +40,16 @@ router.post('/creatSuperUser', auth, async(request, response) =>{
                 albums,
                 singles
             } = request.body;
+            // we need to check if there is artist profile with the artist nick name that we got
             const isArtistNameInUse = await SuperUser.findOne({artistName: artistName});
             if(isArtistNameInUse) {
+                // if there is we can't create another one with the same name and we response with massage about this
                 return response.status(200).json({
                     status:false,
                     message: `${artistName} nick name is already used`
                 });
             } else {
+                // else we can create new artist profile with all the details that we got
                 const _superUser = new SuperUser({
                     _id: mongoose.Types.ObjectId(),
                     accountId: accountId,
@@ -56,11 +62,18 @@ router.post('/creatSuperUser', auth, async(request, response) =>{
                     singles: singles
                 }); 
                 if(profileImage) {
+                    // if the user pick image for his profile 
+                    // we add it to the new profile image
+                    // else the recorde will be create with default image
                     _superUser.profileImage = profileImage;
                 }               
                 if(profileSeconderyImage) {
+                    // if the user pick secondery image for his profile 
+                    // we add it to the new secondery profile image
+                    // else the recorde will be create with default secondery image
                     _superUser.profileSeconderyImage = profileSeconderyImage;
                 }
+                // we save the new record
                 _user.save()
                 return _superUser.save()
                 .then(newSuperUser => {
@@ -80,17 +93,25 @@ router.post('/creatSuperUser', auth, async(request, response) =>{
     })
 });
 
+// This request uses to update the artist account
 router.put('/updateSuperUser', auth, async(request, response) => {
+    // account id of the current user 
     const accountId = request.account._id;
+    // we are looking for artist account with the same account id
     SuperUser.findOne({accountId: accountId})
     .then(async artist => {
+        // if there is an artist profile to this account 
+        // we can change the details of the profile
         if(artist) {
+            // all details for the artist profile that we got from the body of the request
             const {
                 artistName,
                 description,
                 profileImage,
                 profileSeconderyImage,
             } = request.body;
+            // we update all the required attributs
+            // and save the record
             artist.artistName = artistName;
             artist.description = description;
             artist.profileImage = profileImage;
@@ -107,6 +128,7 @@ router.put('/updateSuperUser', auth, async(request, response) => {
                 })
             })
         } else {
+            // else if there is no artist profile to this account we response with message about this
             return response.status(403).json({
                 message: `${request.account.email} is not recognize as artist`
             })
