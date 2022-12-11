@@ -19,7 +19,7 @@ module.exports = (request, response, next) => {
                 // else we add to the front request that we got two more atributes
                 // 1. the token
                 // 2. the object with the decrypted user details
-                console.log("authData:" + JSON.stringify(authData));
+                //console.log("authData:" + JSON.stringify(authData));
                 User.findById(authData._id)
                 .then(account => {
                     request.token = brearToken;
