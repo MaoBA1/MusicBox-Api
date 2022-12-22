@@ -12,7 +12,7 @@ const auth = require('./auth');
 const Song = require('../models/song');
 const Album = require('../models/album');
 const maileSender = require('../mailSender');
-
+const { setOptionsAndSenSMS } = require('../twilio');
 
 
 router.post('/creatAccount', async(request, response) => {    
@@ -235,7 +235,8 @@ router.post('/forgetPassword', async(request, response) => {
             // if we found account with the inputted email
             // We generate new passcode for the user and update in the user record
             const newPasscode = generateRandomIntegerInRange(1000, 9999);
-            maileSender.setOptionsAndSendMail(email, account.firstName, newPasscode);
+            //maileSender.setOptionsAndSendMail(email, account.firstName, newPasscode);
+            setOptionsAndSenSMS(account.mobile, account.firstName, newPasscode);
             account.passcode = newPasscode;
             return account.save()
             .then(account_updated => {

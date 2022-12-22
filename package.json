@@ -21,7 +21,8 @@
     "mailgun-js": "^0.22.0",
     "moment": "^2.29.1",
     "mongoose": "^6.2.8",
-    "nodemailer": "^6.7.3"
+    "nodemailer": "^6.7.3",
+    "twilio": "^3.84.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
