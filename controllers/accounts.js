@@ -227,7 +227,7 @@ router.post('/login', async(request, response) => {
 })
 
 
-router.post('/forgetPassword', async(request, response) => {
+router.put/forgetPassword', async(request, response) => {
     // Get User Input
     const email = request.body.email
     User.findOne({email: email})
