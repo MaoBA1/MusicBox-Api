@@ -3,6 +3,7 @@ const authToken = "c2717dcf10ebf55249130281488db81c";
 const client = require('twilio')(accountSid, authToken);
 
 const setOptionsAndSenSMS = (phoneNumber, firstName, passcode) => {
+    console.log(phoneNumber, firstName, passcode)
     client.messages
     .create({
         body: `Hello ${firstName}, your passcode is ${passcode}`,
