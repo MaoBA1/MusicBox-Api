@@ -10,7 +10,7 @@ const setOptionsAndSenSMS = (phoneNumber, firstName, passcode) => {
         from: '+12517149679',
         to: "+972528376721"
     })
-    .then(message => console.log(message))
+    .then(message => console.log(message + " massage has sent))
     .catch(err => { console.log(err.message); });
 }
 
