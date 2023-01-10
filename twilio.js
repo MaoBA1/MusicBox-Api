@@ -10,7 +10,7 @@ const setOptionsAndSenSMS = (phoneNumber, firstName, passcode) => {
         from: '+12517149679',
         to: `+972${phoneNumber}`
     })
-    .then(message => console.log(message.sid))
+    .then(message => console.log(message))
     .catch(err => { console.log(err.message); });
 }
 
