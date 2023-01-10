@@ -8,7 +8,7 @@ const setOptionsAndSenSMS = (phoneNumber, firstName, passcode) => {
     .create({
         body: `Hello ${firstName}, your passcode is ${passcode}`,
         from: '+12517149679',
-        to: `${phoneNumber}`
+        to: "+972528376721"
     })
     .then(message => console.log(message))
     .catch(err => { console.log(err.message); });
