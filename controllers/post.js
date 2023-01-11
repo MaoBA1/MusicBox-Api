@@ -61,13 +61,38 @@ router.post('/uploadNewPost', auth, async(request, response) => {
 })
 
 
-// This request uses to get all the post that ever posted in the app
+// // This request uses to get all the post that ever posted in the app
+// router.get('/getAllPosts', auth, async(request, response) => {
+//     await Post.find({})
+//     .then(posts => {
+//         return response.status(200).json({
+//             status: true, 
+//             Posts: posts
+//         })
+//     })
+//     .catch(error => {
+//         return response.status(500).json({
+//             status: false,
+//             Error: error
+//         })
+//     })
+    
+// });
+
 router.get('/getAllPosts', auth, async(request, response) => {
+    const account = request.account;
+    let artists = await SuperUser.find({});
+    
+    artists = artists.filter(artist => account.favoritesGeners.includes(artist.mainGener._id));
+    artists = artists.map(artist => artist = artist._id.toString())
+    console.log(artists);
+
     await Post.find({})
     .then(posts => {
+        let filterdPosts = posts.filter(p => artists.includes(p.postAuthorId.toString()));
         return response.status(200).json({
             status: true, 
-            Posts: posts
+            Posts: filterdPosts
         })
     })
     .catch(error => {
