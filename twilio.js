@@ -1,5 +1,5 @@
 const accountSid = "ACbf4683dcb4e1cf33335af721fdc7259e";
-const authToken = "8b5b94dd6af78b514f39809d2f9d52aa";
+const authToken = "9402085b756e1f98e3b23008a8a61101";
 const client = require('twilio')(accountSid, authToken);
 
 const setOptionsAndSenSMS = (phoneNumber, firstName, passcode) => {
