@@ -1,5 +1,5 @@
 const accountSid = "ACbf4683dcb4e1cf33335af721fdc7259e";
-const authToken = "c2717dcf10ebf55249130281488db81c";
+const authToken = "8b5b94dd6af78b514f39809d2f9d52aa";
 const client = require('twilio')(accountSid, authToken);
 
 const setOptionsAndSenSMS = (phoneNumber, firstName, passcode) => {
@@ -8,9 +8,9 @@ const setOptionsAndSenSMS = (phoneNumber, firstName, passcode) => {
     .create({
         body: `Hello ${firstName}, your passcode is ${passcode}`,
         from: '+12517149679',
-        to: "+972528376721"
+        to: `+972${phoneNumber}`
     })
-    .then(message => console.log(message + " massage has sent))
+    .then(message => console.log(message + " massage has sent"))
     .catch(err => { console.log(err.message); });
 }
 

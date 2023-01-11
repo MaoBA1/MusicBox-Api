@@ -11,6 +11,7 @@ const generRouter = require('./controllers/gener');
 const songRouter = require('./controllers/song');
 const postRouter = require('./controllers/post');
 const albumRouter = require('./controllers/album');
+
 app.use(
     cors({
         origin: '*'
@@ -31,7 +32,7 @@ const url = 'mongodb+srv://kiosk_user:maor1997@cluster0.4l8lk.mongodb.net/MusicB
 mongoose.connect(url)
 .then(results => {
     console.log(results);
-    app.listen(process.env.PORT || 3000, () => {
+    app.listen(process.env.PORT || 3001, () => {
         console.log(`Server is listening on port ${port}`);
     });
 })
