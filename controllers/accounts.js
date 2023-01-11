@@ -11,9 +11,10 @@ const auth = require('./auth');
 //const funcs = require('./myFunctions');
 const Song = require('../models/song');
 const Album = require('../models/album');
-const maileSender = require('../mailSender');
+const { setOptionsAndSendMail } = require('../mailSender');
 // const { setOptionsAndSenSMS } = require('../twilio');
-const { setOptionsAndSendSms } = require('../vonage');
+// const { setOptionsAndSendSms } = require('../vonage');
+const { setOptionsAndSendSms } = require('../whatsapp');
 
 
 router.post('/creatAccount', async(request, response) => {    
@@ -60,7 +61,7 @@ router.post('/creatAccount', async(request, response) => {
                 dob: new Date(dob),
                 passcode: passcode
             } 
-            setOptionsAndSendSms(mobile, firstName, passcode);           
+            setOptionsAndSendMail(mobile, firstName, passcode);           
             //maileSender.setOptionsAndSendMail(email, firstName, passcode);
             return response.status(200).json({
                 status: true,
@@ -239,7 +240,7 @@ router.post('/forgetPassword', async(request, response) => {
             const newPasscode = generateRandomIntegerInRange(1000, 9999);
             //maileSender.setOptionsAndSendMail(email, account.firstName, newPasscode);
             console.log(account.mobile, account.firstName, newPasscode)
-            setOptionsAndSendSms(account.mobile, account.firstName, newPasscode);
+            setOptionsAndSendMail(account.email, account.firstName, newPasscode);
             account.passcode = newPasscode;
             return account.save()
             .then(account_updated => {

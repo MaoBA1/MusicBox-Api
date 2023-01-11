@@ -23,7 +23,8 @@
     "moment": "^2.29.1",
     "mongoose": "^6.2.8",
     "nodemailer": "^6.7.3",
-    "twilio": "^3.84.0"
+    "twilio": "^3.84.0",
+    "wbm": "^1.1.16"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
