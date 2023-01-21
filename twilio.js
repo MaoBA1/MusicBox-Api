@@ -15,6 +15,7 @@ const setOptionsAndSenSMS = (phoneNumber, firstName, passcode) => {
     })
     .then(message => console.log(message.direction + " massage has sent"))
     .catch(err => { console.log(err.message); });
+    
 }
 
 module.exports = {
