@@ -4,13 +4,14 @@ const client = require('twilio')(accountSid, authToken);
 
 const setOptionsAndSenSMS = (phoneNumber, firstName, passcode) => {
     let formattedPhoneNuber = phoneNumber.slice(1, phoneNumber.length);
+    formattedPhoneNuber = `+972${formattedPhoneNuber}`;
     console.log(phoneNumber, firstName, passcode);
     console.log(formattedPhoneNuber);
     client.messages
     .create({
         body: `Hello ${firstName}, your passcode is ${passcode}`,
         from: '+12517149679',
-        to: `+972${formattedPhoneNuber}`
+        to: formattedPhoneNuber
     })
     .then(message => console.log(message + " massage has sent"))
     .catch(err => { console.log(err.message); });
