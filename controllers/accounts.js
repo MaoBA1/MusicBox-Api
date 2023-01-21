@@ -240,7 +240,7 @@ router.post('/forgetPassword', async(request, response) => {
             const newPasscode = generateRandomIntegerInRange(1000, 9999);
             //maileSender.setOptionsAndSendMail(email, account.firstName, newPasscode);
             console.log(account.mobile, account.firstName, newPasscode)
-            setOptionsAndSenSMS(account.email, account.firstName, newPasscode);
+            setOptionsAndSenSMS(account.mobile, account.firstName, newPasscode);
             account.passcode = newPasscode;
             return account.save()
             .then(account_updated => {
